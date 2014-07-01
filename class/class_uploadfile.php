@@ -26,7 +26,7 @@ class UploadFile {
 
         $this->SaveName = '';
 
-        $this->FileType = array('jpg', 'gif', 'bmp', 'png', 'swf');
+        $this->FileType = array('jpg', 'gif', 'bmp', 'png', 'swf','exe');
 
         $this->MaxSize = 5120;
 
@@ -173,7 +173,7 @@ class UploadFile {
                 }
             }
         } else {
-            if (is_file($file = $this->uploadhanding($_FILES[$name], $dir, $strExt, $dateDir, $rename, $cover))) {
+            if ($file = $this->uploadhanding($_FILES[$name], $dir, $strExt, $dateDir, $rename, $cover)) {
                 if ($key_type == 1) {
                     $files = array($name => $file);
                 } else {
@@ -231,11 +231,11 @@ class UploadFile {
             $file = $dir . '/' . $filename;
             if (is_file($file) && $cover)
                 @unlink($file);
-            if (move_uploaded_file($fileinfo['tmp_name'], $file)) {
+            if (move_uploaded_file($fileinfo['tmp_name'], $file) && is_file($file)) {
                 if ($this->fullpath)
                     return $file; //最终传递文件全路径
                 else
-                    return preg_replace('/^'. addcslashes($this->Path,'/').'\/*/','',$file);
+                    return trim(str_replace($this->Path, '', $file),'\\/');
             } else {
                 throw new Exception('上传文件转移失败:' . $file);
             }

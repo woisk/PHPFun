@@ -44,3 +44,14 @@ function session($key, $value = null) {
     $_SESSION[$key] = $value;
     return isset($_SESSION[$key]);
 }
+
+function cache($key, $value = null,$lifetime = 3600){
+    $cache = new Cached;
+    if ($value === '') {
+        return $cache->delete($key);
+    }
+    if ($value === null){
+        return $cache->get($key);
+    }
+    return $cache->set($key, $value,$lifetime);
+}

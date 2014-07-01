@@ -5,13 +5,13 @@ function upload($name, $UploadDir = 'upload', $datedir = true) {
         return false;
     if ($_FILES[$name]['name'] != '') {
         $file = new UploadFile();
-        $file->Path = UPLOAD_ROOT;
+        $file->Path = FUN_ROOT;
         $file->UploadDir = $UploadDir;
         if ($datedir)
             $file->UploadDir .= date('/Ym');
-        if (!is_dir(mk_dir($file->UploadDir)))
+        if (!is_dir(mk_dir($file->Path.$file->UploadDir)))
             return false;
-        $filename = $file->Upload($_FILES[$name]);
+        $filename = $file->uploading($name);
 
         if ($file->Uploaded) {
             //$filename = basename($filename);
@@ -128,7 +128,7 @@ function localip() {
     return error('[web\localip] cannot get any ip by preg match');
 }
 
-function curl($url, $params = null,$cookies = null,$headers = null) {
+function curl($url, $post = null,$cookies = null,$headers = null) {
     if (!$url)
         return false;
     $init = curl_init();
@@ -137,20 +137,18 @@ function curl($url, $params = null,$cookies = null,$headers = null) {
     curl_setopt($init, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($init, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2 (.NET CLR 3.5.30729)");
     curl_setopt($init, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
-    if ($params) {
-        if (is_array($params))
-            $params = http_build_query($params);
-        else
-            $params = (string) $params;
+    if ($post) {
         curl_setopt($init, CURLOPT_POST, true);
-        curl_setopt($init, CURLOPT_POSTFIELDS, $params);
+        if (is_array($post))
+            $post = http_build_query($post);
+        if (is_string($post) && strlen($post))
+            curl_setopt($init, CURLOPT_POSTFIELDS, $post);
     }
     if ($cookies) {
         if (is_array($cookies))
             $cookies = http_build_cookie($cookies);
-        else
-            $cookies = (string) $cookies;
-        curl_setopt($init, CURLOPT_COOKIE, $cookies);
+        if (is_string($cookies) && strlen($cookies))
+            curl_setopt($init, CURLOPT_COOKIE, $cookies);
     }
     if ($headers) {
         if (is_array($headers)){
