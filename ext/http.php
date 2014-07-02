@@ -139,10 +139,7 @@ function curl($url, $post = null,$cookies = null,$headers = null) {
     curl_setopt($init, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
     if ($post) {
         curl_setopt($init, CURLOPT_POST, true);
-        if (is_array($post))
-            $post = http_build_query($post);
-        if (is_string($post) && strlen($post))
-            curl_setopt($init, CURLOPT_POSTFIELDS, $post);
+        curl_setopt($init, CURLOPT_POSTFIELDS, $post);
     }
     if ($cookies) {
         if (is_array($cookies))
