@@ -134,13 +134,15 @@ function curl($url, $post = null,$cookies = null,$headers = null) {
     $init = curl_init();
     curl_setopt($init, CURLOPT_URL, $url);
     curl_setopt($init, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($init, CURLOPT_SSL_VERIFYPEER, 0);
-    curl_setopt($init, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2 (.NET CLR 3.5.30729)");
-    curl_setopt($init, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
+    //curl_setopt($init, CURLOPT_SSL_VERIFYPEER, 0);
+    //curl_setopt($init, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2 (.NET CLR 3.5.30729)");
+    //curl_setopt($init, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
     if ($post) {
         curl_setopt($init, CURLOPT_POST, true);
-        curl_setopt($init, CURLOPT_POSTFIELDS, $post);
+        if (is_array($post) && is_string($post))
+            curl_setopt($init, CURLOPT_POSTFIELDS, $post);
     }
+    var_dump($post,$cookies,$headers);
     if ($cookies) {
         if (is_array($cookies))
             $cookies = http_build_cookie($cookies);
