@@ -23,6 +23,7 @@ function upload($name, $UploadDir = 'upload', $datedir = true) {
     }
 }
 
+//获得当前页面的域名，可以带上自定义uri
 function domain($uri = '',$pre = 'http'){
     if (isset($_SERVER['SERVER_NAME']))
         $domain = $_SERVER['SERVER_NAME'];
@@ -32,6 +33,14 @@ function domain($uri = '',$pre = 'http'){
         $domain = '';
     
     return $pre.'://'.$domain.'/'.$uri;
+}
+
+//获得当前页面的完整url
+function url(){
+    $url = (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == '443') ? 'https://' : 'http://';
+    $url .= isset($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:$_SERVER['HTTP_HOST'];
+    $url .= isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : urlencode($_SERVER['PHP_SELF']) . '?' . urlencode($_SERVER['QUERY_STRING']);
+    return $url;
 }
 
 //获取顶级域名
