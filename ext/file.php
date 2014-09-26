@@ -109,6 +109,53 @@ function fileprename($filename){
 }
 
 //获取文件扩展名
-function fileext($filename){
-    return pathinfo($filename,PATHINFO_EXTENSION);
+function fileext($filename,$check = false){
+    if (is_file($object)) {
+        if ($check)
+            return pathinfo($filename,PATHINFO_EXTENSION);
+        $file = fopen($object, "rb");
+        $bin = fread($file, 2); //只读2字节  
+        fclose($file);
+    } else {
+        $bin = substr($object, 0, 2);
+    }
+    $strInfo = @unpack("C2chars", $bin);
+    $typeCode = intval($strInfo['chars1'] . $strInfo['chars2']);
+    $fileType = '';
+    switch ($typeCode) {
+        case 7790:
+            $fileType = 'exe';
+            break;
+        case 7784:
+            $fileType = 'midi';
+            break;
+        case 8297:
+            $fileType = 'rar';
+            break;
+        case 8075:
+            $fileType = 'zip';
+            break;
+        case 255216:
+            $fileType = 'jpg';
+            break;
+        case 7173:
+            $fileType = 'gif';
+            break;
+        case 6677:
+            $fileType = 'bmp';
+            break;
+        case 13780:
+            $fileType = 'png';
+            break;
+        default:
+            $fileType = '';
+    }
+
+    //Fix  
+    if ($strInfo['chars1'] == '-1' AND $strInfo['chars2'] == '-40')
+        return 'jpg';
+    if ($strInfo['chars1'] == '-119' AND $strInfo['chars2'] == '80')
+        return 'png';
+
+    return $fileType;
 }
