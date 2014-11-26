@@ -206,6 +206,41 @@ function curl($url, $post = null,$cookies = null,$headers = null) {
     return $result;
 }
 
+function curl_multi(array $urls) {
+    if (empty($urls))
+        return false;
+    $init = curl_multi_init();
+    $options = array(
+        //启用时会将头文件的信息作为数据流输出
+        CURLOPT_HEADER => 0,
+        //文件流形式
+        CURLOPT_RETURNTRANSFER => 1,
+        //设置curl允许执行的最长秒数   
+        CURLOPT_TIMEOUT => 5,
+        CURLOPT_CONNECTTIMEOUT => 5,
+    );
+    $conn = array();
+    
+    foreach ($urls as $k => $url) {
+        $conn[$k] = curl_init($url);
+        curl_setopt_array($conn[$k], $options);
+        curl_multi_add_handle($init, $conn[$k]);
+    }
+    do{
+        do {
+            $mrc = curl_multi_exec($init, $running);
+        } while (($mrc == CURLM_CALL_MULTI_PERFORM) || (curl_multi_select($init) != -1));
+    }while ($running and $mrc == CURLM_OK);
+    
+    $ret = array();
+    foreach ($urls as $k => $url) {
+        $error = curl_error($conn[$k]);
+        $ret[$k] = $error ? $error : curl_multi_getcontent($conn[$k]);
+        curl_close($conn[$k]);
+    }
+    return  $ret;
+}
+
 //url是否存在
 function url_exists($url)  
 {  
