@@ -321,21 +321,38 @@ function url_exists($url)
 }
 
 function online_filesize($url) {
-    $url = parse_url($url);
-    if ($fp = @fsockopen($url['host'], empty($url['port']) ? 80 : $url['port'], $error)) {
-        fputs($fp, "GET " . (empty($url['path']) ? '/' : $url['path']) . " HTTP/1.1\r\n");
-        fputs($fp, "Host: {$url['host']}\r\n\r\n");
-        while (!feof($fp)) {
-            $tmp = fgets($fp);
-            if (trim($tmp) == '') {
-                break;
-            } else if (preg_match('/Content-Length:(.*)/si', $tmp, $arr)) {
-                return intval(trim($arr[1]));
-            }
+    if (function_exists('curl_init'))
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_NOBODY, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        $results = explode("\n", trim(curl_exec($ch)));
+        foreach($results as $line) {
+                if (strtok($line, ':') == 'Content-Length') {
+                        $parts = explode(":", $line);
+                        return intval(trim($parts[1]));
+                }
         }
-        return null;
-    } else {
-        return null;
+    }else{
+        $url = parse_url($url);
+        if ($fp = @fsockopen($url['host'], empty($url['port']) ? 80 : $url['port'], $error)) {
+            fputs($fp, "GET " . (empty($url['path']) ? '/' : $url['path']) . " HTTP/1.1\r\n");
+            fputs($fp, "Host: {$url['host']}\r\n\r\n");
+            while (!feof($fp)) {
+                $tmp = fgets($fp);
+                if (trim($tmp) == '') {
+                    break;
+                } else if (preg_match('/Content-Length:(.*)/si', $tmp, $arr)) {
+                    return intval(trim($arr[1]));
+                }
+            }
+            return null;
+        } else {
+            return null;
+        }
     }
 }
 

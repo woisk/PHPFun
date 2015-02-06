@@ -3,8 +3,12 @@
 //是否是json
 if (!function_exists('is_json')){
     function is_json($str){
-        json_decode($str);
-        return (json_last_error() == JSON_ERROR_NONE);
+        if (is_null(json_decode($str))
+                || (json_last_error() != JSON_ERROR_NONE))
+            return false;
+        if (!preg_match('/^[\{\[].*[\}\]]$/', ltrim($str,'\\')))
+            return false;
+        return true;
     }
 }
 

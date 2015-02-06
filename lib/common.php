@@ -34,9 +34,9 @@ if (!function_exists('req_once')){
 
 if (!function_exists('got')){
     function got($a,$k,$default = NULL){
-	if (is_array($a) && isset($a[$k])) return $a[$k];
-	if (is_object($a) && isset($a->$k)) return $a->$k;
-	return $default;
+        if (is_array($a) && isset($a[$k])) return $a[$k];
+        if (is_object($a) && isset($a->$k)) return $a->$k;
+        return $default;
     }
 }
 
@@ -56,9 +56,9 @@ if (!function_exists('eq')){//获取数组中的第$index个元素
 
 if (!function_exists('pre')){
     function pre($var,$func = 'var_export'){
-	echo '<pre style="text-align:left;clear:both;font-size:14px;color:black;">';
-	if (function_exists($func))
-		$func($var);
-	echo '</pre>';
+        echo '<pre style="text-align:left;clear:both;font-size:14px;color:black;">';
+        if (function_exists($func))
+            $func($var);
+        echo '</pre>';
     }
 }
