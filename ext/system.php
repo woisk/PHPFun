@@ -77,9 +77,7 @@ function wget($inputfile,$outputfile)
        return "{$outputfile} not exists";
 
    //获取抓取下来的文件类型
-   $finfo  =  finfo_open ( FILEINFO_MIME_TYPE );
-   $localfiletype = finfo_file ( $finfo ,  $outputfile );
-   finfo_close ( $finfo );
+   $localfiletype = filemime($outputfile);
 
    if ($onlinefiletype && ($onlinefiletype != $localfiletype))
        return "online {$onlinefiletype} not match local {$localfiletype}";

@@ -393,3 +393,33 @@ function online_filetype($url) {
         }
         return null;
 }
+
+function curl_upload($url, $file, $fieldname = 'file') {
+    if (!function_exists('curl_init'))
+        return false;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    if (class_exists('\CURLFile')) {
+        curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+            $fieldname => new \CURLFile(realpath($file))
+        ));
+    } else {
+        if (defined('CURLOPT_SAFE_UPLOAD')) {
+            curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
+        }
+        $filename = basename($file);
+        $type = filemime($file);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+            $fieldname => '@' . realpath($file) . ";type=" . $type . ";filename=" . $filename
+        ));
+    }
+    
+    $return_data = curl_exec($ch);
+    curl_close($ch);
+    return $return_data;
+}
