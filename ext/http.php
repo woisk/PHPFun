@@ -394,7 +394,7 @@ function online_filetype($url) {
         return null;
 }
 
-function curl_upload($url, $file, $fieldname = 'file') {
+function curl_upload($url, $file, $postFields = null, $fieldname = 'file') {
     if (!function_exists('curl_init'))
         return false;
     $ch = curl_init();
@@ -403,21 +403,29 @@ function curl_upload($url, $file, $fieldname = 'file') {
     curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     
+    if (is_string($postFields)){
+        parse_str($postFields,$postFields);
+    }else{
+        $postFields = (array)$postFields;
+    }
     if (class_exists('\CURLFile')) {
         curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        $postFields[$fieldname] = new \CURLFile(realpath($file));
+        /*curl_setopt($ch, CURLOPT_POSTFIELDS, array(
             $fieldname => new \CURLFile(realpath($file))
-        ));
+        ));*/
     } else {
         if (defined('CURLOPT_SAFE_UPLOAD')) {
             curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
         }
         $filename = basename($file);
         $type = filemime($file);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        $postFields[$fieldname] = '@' . realpath($file) . ";type=" . $type . ";filename=" . $filename;
+        /*curl_setopt($ch, CURLOPT_POSTFIELDS, array(
             $fieldname => '@' . realpath($file) . ";type=" . $type . ";filename=" . $filename
-        ));
+        ));*/
     }
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
     
     $return_data = curl_exec($ch);
     curl_close($ch);
