@@ -257,8 +257,8 @@ function url_exists($url)
    curl_setopt($ch, CURLOPT_URL, $url);  
   
    /* set the user agent - might help, doesn't hurt */  
-   //curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');  
-   curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; wowTreebot/1.0; +http://wowtree.com)');  
+   curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)');  
+   //curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; wowTreebot/1.0; +http://wowtree.com)');  
    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);  
   
    /* try to follow redirects */  
@@ -330,6 +330,11 @@ function online_filesize($url) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
         $results = explode("\n", trim(curl_exec($ch)));
+        if (preg_match('/HTTP\/1\.\d+\s+(\d+)/', $results[0], $matches)) {  
+            $code = intval($matches[1]);  
+            if (($code < 200) || ($code >= 400))
+                return null;
+        }
         foreach($results as $line) {
                 if (strtok($line, ':') == 'Content-Length') {
                         $parts = explode(":", $line);
@@ -341,6 +346,16 @@ function online_filesize($url) {
         if ($fp = @fsockopen($url['host'], empty($url['port']) ? 80 : $url['port'], $error)) {
             fputs($fp, "GET " . (empty($url['path']) ? '/' : $url['path']) . " HTTP/1.1\r\n");
             fputs($fp, "Host: {$url['host']}\r\n\r\n");
+            while (!feof($fp)) {
+                if ($tmp = trim(fgets($fp))){
+                    if (preg_match('/HTTP\/1\.\d+\s+(\d+)/', $tmp, $matches)) {  
+                        $code = intval($matches[1]);  
+                        if (($code < 200) || ($code >= 400))
+                            return null;
+                    }
+                    break;
+                }
+            }
             while (!feof($fp)) {
                 $tmp = fgets($fp);
                 if (trim($tmp) == '') {
