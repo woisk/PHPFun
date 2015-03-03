@@ -24,4 +24,4 @@ defined('FUN_CLASS') or define('FUN_CLASS',  FUN_ROOT.'class'.DS);
 
 //date_default_timezone_set('PRC');
 
-require_once FUN_ROOT.'init.php';
+require_once FUN_ROOT.'init.php';;
