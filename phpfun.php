@@ -26,3 +26,4 @@ defined('FUN_CLASS') or define('FUN_CLASS',  FUN_ROOT.'class'.DS);
 
 require_once FUN_ROOT.'init.php';
 123;
+345;
