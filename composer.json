@@ -1,0 +1,21 @@
+{
+    "name": "ownfire/phpfun",
+    "license": "MIT",
+    "description": "php大量自定义的方便的函数 ",
+    "keywords": ["php", "function", "custom", "user-defined"],
+    "homepage": "http://git.oschina.net/ownfire/phpfun",
+    "authors": [
+        {
+            "name": "ownfire",
+            "homepage": "http://git.oschina.net/ownfire",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+	"repositories": [
+		{"type": "composer", "url": "http://pkg.phpcomposer.com/repo/packagist/"},
+		{"packagist": false}
+	]
+}
