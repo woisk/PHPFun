@@ -446,3 +446,42 @@ function curl_upload($url, $file, $postFields = null, $fieldname = 'file') {
     curl_close($ch);
     return $return_data;
 }
+
+function file_get_contents_v2($path, $timeout = 120, $post = array()) {
+    if (strpos($path, 'http') === 0) {
+        $default_socket_timeout = ini_get('default_socket_timeout');
+        ini_set('default_socket_timeout', $timeout);
+        if (!empty($post)) {
+            $context = stream_context_create(array(
+                'http' => array(
+                    'timeout' => $timeout,
+                    'method' => 'POST',
+                    'content' => http_build_query($post, '', '&')
+                )
+            ));
+        } else {
+            $context = stream_context_create(array(
+                'http' => array(
+                    'method' => "GET",
+                    'timeout' => $timeout,
+                )
+            ));
+        }
+        /*$filesize = online_filesize($path);
+        $content = file_get_contents($path, false, $context);
+        if (!$content || (strlen($content) != $filesize)) {
+            $content = file_get_contents($path, false, $context);
+            if (!$content || (strlen($content) != $filesize)) {
+                $content = false;
+            }
+        }*/
+        $content = file_get_contents($path, false, $context);
+        if (!$content) {
+            $content = file_get_contents($path, false, $context);
+        }
+        ini_set('default_socket_timeout', $default_socket_timeout);
+    } else {
+        $content = file_get_contents($path);
+    }
+    return $content;
+}
