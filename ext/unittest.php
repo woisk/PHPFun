@@ -66,3 +66,7 @@ function ut_end($tag = null,$render = null){
     
     unset($runtime[$tag]);
 }
+
+function whoops($pretty = true){
+    $whoops = new whoops($pretty);
+}
