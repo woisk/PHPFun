@@ -21,6 +21,7 @@ defined('FUN_LOG') or define('FUN_LOG',  FUN_ROOT.'runtime'.DS.'log'.DS);
 defined('FUN_LIB') or define('FUN_LIB',  FUN_ROOT.'lib'.DS);
 defined('FUN_EXT') or define('FUN_EXT',  FUN_ROOT.'ext'.DS);
 defined('FUN_CLASS') or define('FUN_CLASS',  FUN_ROOT.'class'.DS);
+defined('FUN_VENDOR') or define('FUN_VENDOR',  FUN_ROOT.'vendor'.DS);
 
 //date_default_timezone_set('PRC');
 

@@ -1,3 +1,0 @@
-[submodule "lib/whoops"]
-	path = lib/whoops
-	url = https://github.com/filp/whoops.git

@@ -4,7 +4,7 @@
  * zip('test.xls',array());
  */
 function excel($excel,array $files = null){
-    
+    require FUN_VENDOR . 'autoload.php';
 }
 
 /* 
@@ -81,13 +81,24 @@ function backup($filename,$cover = null){
     return $dest;
 }
 
+/*
+ * @param array $smtp_server
+ * array(
+ *  'host'=>'smtp.163.com',
+ *  'username'=>'your password account like test@gmail.com',
+ *  'password'=>'your email password',
+ *  'port'=>25, //no ssl
+ *  'fromname'=>'wuxiao'
+ * )
+ */
 //发邮件
-function email_send($to,$subject,$mailbody,$smtp_server,$codes) {
-    require_once FUN_LIB.'phpmailer/class.phpmailer.php';
+function email_send($to,$subject,$mailbody,array $smtp_server,$SMTPSecure = '') {
+    require FUN_VENDOR . 'autoload.php';
     
     $mail = new PHPMailer(); //建立邮件发送类
     $mail->CharSet = "utf-8";
     $mail->IsSMTP(); // 使用SMTP方式发送
+    $mail->SMTPSecure = $SMTPSecure;//ssl/tls
     $mail->SMTPAuth = true; // 启用SMTP验证功能
     $mail->Host = $smtp_server['host']; // 您的企业邮局域名
     $mail->Username = $smtp_server['username']; // 邮局用户名(请填写完整的email地址)
