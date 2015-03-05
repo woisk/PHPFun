@@ -1,2 +1,4 @@
 upload
 runtime
+vendor
+composer.lock

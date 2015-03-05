@@ -12,7 +12,8 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+		"filp/whoops": "1.2.*@dev"
     },
 	"repositories": [
 		{"type": "composer", "url": "http://pkg.phpcomposer.com/repo/packagist/"},
