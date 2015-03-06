@@ -26,3 +26,7 @@ defined('FUN_VENDOR') or define('FUN_VENDOR',  FUN_ROOT.'vendor'.DS);
 //date_default_timezone_set('PRC');
 
 require_once FUN_ROOT.'init.php';
+
+class PHPFun{
+    
+}
