@@ -15,11 +15,9 @@
     "require": {
         "php": ">=5.3.0",
 		"filp/whoops": "1.2.*@dev",
-		"phpmailer/phpmailer": "5.2.9",
-		"phpexcel/phpexcel": "dev-master"
+		"phpmailer/phpmailer": "5.2.9"
     },
-	"repositories": [
-		{"type": "composer", "url": "http://pkg.phpcomposer.com/repo/packagist/"},
-		{"packagist": false}
-	]
+	"require-dev": {
+        "phpoffice/phpexcel": "dev-master"
+    }
 }
