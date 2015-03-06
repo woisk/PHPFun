@@ -439,3 +439,120 @@ function _U2_Utf8_Gb($_C) {
     }
     return iconv('UTF-8', 'GBK//IGNORE', $_String);
 }
+
+/**
+ * 获取字符串首字母, 可传入汉字，字母 ，数字
+ *
+ * @param String $string
+ * @return String
+ */
+function getFirstLetter($string) {
+    $string = iconv('utf-8', 'gbk', $string); //字符编码转换
+    $dict = array(
+        'a' => 0xB0C4,
+        'b' => 0xB2C0,
+        'c' => 0xB4ED,
+        'd' => 0xB6E9,
+        'e' => 0xB7A1,
+        'f' => 0xB8C0,
+        'g' => 0xB9FD,
+        'h' => 0xBBF6,
+        'j' => 0xBFA5,
+        'k' => 0xC0AB,
+        'l' => 0xC2E7,
+        'm' => 0xC4C2,
+        'n' => 0xC5B5,
+        'o' => 0xC5BD,
+        'p' => 0xC6D9,
+        'q' => 0xC8BA,
+        'r' => 0xC8F5,
+        's' => 0xCBF9,
+        't' => 0xCDD9,
+        'w' => 0xCEF3,
+        'x' => 0xD188,
+        'y' => 0xD4D0,
+        'z' => 0xD7F9
+    );
+    $letter = substr($string, 0, 4);
+    if ($letter >= chr(0x81) && $letter <= chr(0xfe)) {
+        $num = hexdec(bin2hex(substr($string, 0, 2)));
+        foreach ($dict as $k => $v) {
+            if ($v >= $num)
+                break;
+        }
+        return strtoupper($k);
+    }
+    elseif ((ord($letter) > 64 && ord($letter) < 91) || (ord($letter) > 96 && ord($letter) < 123)) {
+        return strtoupper($letter{0});
+    } elseif ($letter >= '0' && $letter <= '9') {
+        return $letter;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * 获取货币
+ * 
+ * @param string $currency
+ * @return string
+ */
+function getCurrency($currency) {
+    switch ($currency) {
+        case 'BRL' : $currency_symbol = '&#82;&#36;';
+            break;
+        case 'AUD' : $currency_symbol = '&#36;';
+            break;
+        case 'CAD' : $currency_symbol = '&#36;';
+            break;
+        case 'MXN' : $currency_symbol = '&#36;';
+            break;
+        case 'NZD' : $currency_symbol = '&#36;';
+            break;
+        case 'HKD' : $currency_symbol = '&#36;';
+            break;
+        case 'SGD' : $currency_symbol = '&#36;';
+            break;
+        case 'USD' : $currency_symbol = '&#36;';
+            break;
+        case 'EUR' : $currency_symbol = '&euro;';
+            break;
+        case 'CNY' : $currency_symbol = '&yen;';
+            break;
+        case 'JPY' : $currency_symbol = '&yen;';
+            break;
+        case 'TRY' : $currency_symbol = '&#84;&#76;';
+            break;
+        case 'NOK' : $currency_symbol = '&#107;&#114;';
+            break;
+        case 'ZAR' : $currency_symbol = '&#82;';
+            break;
+        case 'CZK' : $currency_symbol = '&#75;&#269;';
+            break;
+        case 'MYR' : $currency_symbol = '&#82;&#77;';
+            break;
+        case 'DKK' : $currency_symbol = '&#107;&#114;';
+            break;
+        case 'HUF' : $currency_symbol = '&#70;&#116;';
+            break;
+        case 'ILS' : $currency_symbol = '&#8362;';
+            break;
+        case 'PHP' : $currency_symbol = '&#8369;';
+            break;
+        case 'PLN' : $currency_symbol = '&#122;&#322;';
+            break;
+        case 'SEK' : $currency_symbol = '&#107;&#114;';
+            break;
+        case 'CHF' : $currency_symbol = '&#67;&#72;&#70;';
+            break;
+        case 'TWD' : $currency_symbol = '&#78;&#84;&#36;';
+            break;
+        case 'THB' : $currency_symbol = '&#3647;';
+            break;
+        case 'GBP' : $currency_symbol = '&pound;';
+            break;
+        default : $currency_symbol = '&yen;';
+            break;
+    }
+    return $currency_symbol;
+}
