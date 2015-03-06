@@ -177,7 +177,7 @@ function curl($url, $post = null,$cookies = null,$headers = null) {
     //curl_setopt($init, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
     if ($post) {
         curl_setopt($init, CURLOPT_POST, true);
-        if (is_array($post) && is_string($post))
+        if (is_array($post) || is_string($post))
             curl_setopt($init, CURLOPT_POSTFIELDS, $post);
     }
     if ($cookies) {
