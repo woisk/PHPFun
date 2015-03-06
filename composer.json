@@ -21,8 +21,6 @@
         "phpoffice/phpexcel": "1.8.0"
     },
     "autoload": {
-        "psr-0": {
-            "PHPFun": "/"
-        }
+        "classmap": ["PHPFun.php"]
     }
 }
