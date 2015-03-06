@@ -1,6 +1,6 @@
 <?php
 //$_SESSION ['SafeCode'] = 验证码;
-session_start();
+session_id() or session_start();
 $type = 'gif';
 $width = 40;
 $height = 16;

@@ -4,7 +4,7 @@
  * zip('test.xls',array());
  */
 function excel($excel,array $files = null){
-    require FUN_VENDOR . 'autoload.php';
+    ;
 }
 
 /* 
@@ -93,8 +93,6 @@ function backup($filename,$cover = null){
  */
 //发邮件
 function email_send($to,$subject,$mailbody,array $smtp_server,$SMTPSecure = '') {
-    require FUN_VENDOR . 'autoload.php';
-    
     $mail = new PHPMailer(); //建立邮件发送类
     $mail->CharSet = "utf-8";
     $mail->IsSMTP(); // 使用SMTP方式发送

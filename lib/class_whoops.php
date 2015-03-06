@@ -5,8 +5,6 @@ use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
-require FUN_VENDOR . 'autoload.php';
-
 /*class Exception extends BaseException
 {
 }*/

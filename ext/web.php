@@ -34,6 +34,9 @@ function delay($url = '/',$timeout = 5,$msg = ''){
     },1000)</script>';
 }
 
+/*
+ * 生成验证码图像
+ */
 function verifycode($format = ''){
     include FUN_LIB.'verifycode'.EXT;
 }
