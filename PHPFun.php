@@ -15,7 +15,7 @@ defined('FUN_CACHE') or define('FUN_CACHE',  FUN_ROOT.'runtime'.DS.'cache'.DS);
 defined('FUN_LOG') or define('FUN_LOG',  FUN_ROOT.'runtime'.DS.'log'.DS);
 
 defined('FUN_LIB') or define('FUN_LIB',  FUN_ROOT.'lib'.DS);
-defined('FUN_EXT') or define('FUN_EXT',  FUN_ROOT.'ext'.DS);
+defined('FUN_FUNC') or define('FUN_FUNC',  FUN_ROOT.'func'.DS);
 
 //date_default_timezone_set('PRC');
 
@@ -23,14 +23,23 @@ class PHPFun{
     
     protected $debug = true;
     
-    public function init(){
+    public function init($namespace = null){
         require_once FUN_ROOT.'init.php';
         
-        $libs = glob(FUN_EXT.'*.php');
-        $libs = array_map('realpath',$libs);
-        array_walk($libs,'req_once');
+        if (empty($namespace)){
+            $libs = glob(FUN_FUNC.'*.php');
+            array_walk($libs,'req_once');
+        }else{
+            $this->load($namespace);
+        }
         
         spl_autoload_register(array($this,'lib_autoload'));
+    }
+    
+    public function load($namespace){
+        $namespace = basename($namespace, EXT);
+        $namespace = FUN_FUNC . $namespace . EXT;
+        return req_once($namespace);
     }
     
     //php debug开启

@@ -7,6 +7,8 @@ if (!function_exists('req_once')){
         $filename = (string)$filename;
         if (empty($filename))
             return false;
+        if (!$filename = realpath($filename))
+            return false;
         if (isset($requires[$filename]))
             return true;
         if (!is_file($filename))
