@@ -17,6 +17,7 @@ defined('FUN_LOG') or define('FUN_LOG',  FUN_ROOT.'runtime'.DS.'log'.DS);
 defined('FUN_LIB') or define('FUN_LIB',  FUN_ROOT.'lib'.DS);
 defined('FUN_FUNC') or define('FUN_FUNC',  FUN_ROOT.'func'.DS);
 
+defined('FUN_KEY') or define('FUN_KEY',  '1d2sbFIHzJLmaCSIB8aVsdPj2teSEvUqvxY7femSB2OLsbXs12DMlbPe');
 //date_default_timezone_set('PRC');
 
 class PHPFun{

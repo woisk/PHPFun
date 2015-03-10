@@ -1,9 +1,9 @@
 <?php
 
-function authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
+function uc_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
 	$ckey_length = 4;
 
-	$key = md5($key ? $key : UC_KEY);
+	$key = md5($key ? $key : FUN_KEY);
 	$keya = md5(substr($key, 0, 16));
 	$keyb = md5(substr($key, 16, 16));
 	$keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length): substr(md5(microtime()), -$ckey_length)) : '';
