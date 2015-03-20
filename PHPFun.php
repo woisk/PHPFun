@@ -24,7 +24,24 @@ class PHPFun{
     
     protected $debug = true;
     
-    public function init($namespace = null){
+    protected static $_instance;
+    
+    public function __construct($namespace = null) {
+        $this->init($namespace);
+        self::$_instance = $this;
+    }
+    
+    public static function getInstance(){
+        return self::$_instance;
+    }
+    
+    public function load($namespace){
+        $namespace = basename($namespace, EXT);
+        $namespace = FUN_FUNC . $namespace . EXT;
+        return req_once($namespace);
+    }
+    
+    private function init($namespace = null){
         require_once FUN_ROOT.'init.php';
         
         if (empty($namespace)){
@@ -35,12 +52,6 @@ class PHPFun{
         }
         
         spl_autoload_register(array($this,'lib_autoload'));
-    }
-    
-    public function load($namespace){
-        $namespace = basename($namespace, EXT);
-        $namespace = FUN_FUNC . $namespace . EXT;
-        return req_once($namespace);
     }
     
     //php debug开启

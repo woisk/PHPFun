@@ -22,6 +22,18 @@ function filesize_format($size) {
     }
 }
 
+//例如返回5.2KB的字节数
+function return_bytes($val) {
+    $val = trim($val);
+    $last = strtolower($val{strlen($val)-1});
+    switch($last) {
+        case 'g': $val *= 1024;
+        case 'm': $val *= 1024;
+        case 'k': $val *= 1024;
+    }
+    return $val;
+}
+
 function mv($oldname,$newname){
     if (!is_file($oldname))
         return error('oldfile '.$oldname.' missed');
