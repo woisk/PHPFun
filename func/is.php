@@ -23,22 +23,29 @@ function is_utf8($word) {
 
 /*检测是否有中文字符*/
 function is_chinese($s){
-    return (bool)preg_match('/[\x80-\xff]./', $s);
+    return (bool)(preg_match('/[\x80-\xff]./', $s) || preg_match('/[\u4e00-\u9fa5]./', $s));
 }
 
-//是否是ACSII字符
+//是否是ACSII字符，即双字节字符(包括汉字在内)
 function is_ascii($s){
     return (bool)preg_match('/^[\\x00-\\xFF]+$/', $s);
 }
 
+//是否是qq号
+function is_qq($s){
+    return (bool)preg_match('/^[1-9][0-9]{4,}$/', $s);
+}
+
 //是否是email地址
 function is_email($s){
-    return (bool)preg_match('/^\\w+((-\\w+)|(\\.\\w+))*\\@[A-Za-z0-9]+((\\.|-)[A-Za-z0-9]+)*\\.[A-Za-z0-9]+$/',$s);
+    //return (bool)preg_match('/^\\w+((-\\w+)|(\\.\\w+))*\\@[A-Za-z0-9]+((\\.|-)[A-Za-z0-9]+)*\\.[A-Za-z0-9]+$/',$s);
+    return (bool)filter_var($s,FILTER_VALIDATE_EMAIL);
 }
 
 //是否是url
 function is_url($s){
-    return (bool)preg_match('/^http[s]?:\\/\\/([\\w-]+\\.)+[\\w-]+([\\w-./?%&=]*)?$/',$s);
+    //return (bool)preg_match('/^http[s]?:\\/\\/([\\w-]+\\.)+[\\w-]+([\\w-./?%&=]*)?$/',$s);
+    return (bool)filter_var($s,FILTER_VALIDATE_URL);
 }
 
 //是否是域名
@@ -58,13 +65,24 @@ function is_mobile($s){
 
 //是否是邮编
 function is_zipcode($s){
-    return (bool)preg_match('/^\\d{6}$/',$s);
+    return (bool)preg_match('/^[1-9]\d{5}(?!\d)$/',$s);
 }
 
 //是否是ipv4地址
 function is_ipv4($s){
     return (bool)preg_match('/^(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)$/',$s);
 }
+
+//是否是ip地址
+function is_ip($s){
+    return (bool)filter_var($s,FILTER_VALIDATE_IP);
+}
+
+//是否是网卡mac地址
+function is_mac($s){
+    return (bool)filter_var($s,FILTER_VALIDATE_MAC);
+}
+
 
 //是否是电话号码(包括验证国内区号,国际区号,分机号)
 function is_telephone($s){
@@ -74,6 +92,16 @@ function is_telephone($s){
 //是否是纯数字
 function is_number($s){
     return is_numeric($s) || ctype_digit($s);
+}
+
+//是否是整数
+function is_integer_v2($s){
+    return boolval(is_int($s) || preg_match('/^[-]?[ ]*\d+$/', $s));
+}
+
+//是否是浮点数
+function is_float_v2($s){
+    return boolval(is_float($s) || preg_match('/^[-]?[ ]*\d+\.\d+$/', $s));
 }
 
 //是否是纯英文字母
@@ -96,14 +124,38 @@ function is_date($s){
     return (bool)preg_match('/^\\d{4}(\\-|\\/|\.)\\d{1,2}\\1\\d{1,2}$/',$s);
 }
 
-//长度是否小于提供的数值
-function is_less_length($s,$length){
+//长度是否小于等于提供的数值
+function max_length($s,$length){
     if (!is_int($length))
         return false;
-    return (length($s) < $length);
+    return (length($s) <= $length);
+}
+
+//长度是否大于等于提供的数值
+function min_length($s,$length){
+    if (!is_int($length))
+        return false;
+    return (length($s) >= $length);
+}
+
+//大小是否大于提供的数值
+function greater_than($s,$min){
+    $i = floatval($s);
+    return $i > $min;
+}
+
+//大小是否小于提供的数值
+function less_than($s,$max){
+    $i = floatval($s);
+    return $i < $max;
 }
 
 //是否是身份证号码
 function is_idcard($s){
     return (bool)preg_match('/^[1-9]([0-9]{14}|[0-9]{17})$/',$s);
+}
+
+//是否是台湾身份证号码
+function is_tw_idcard($s){
+    return (bool)preg_match('/^^(?:\d{15}|\d{18})$$/',$s);
 }

@@ -1,6 +1,7 @@
 <?php
 
 function length($str) {
+    $str = (string)$str;
     if (function_exists('mb_strlen'))
         return mb_strlen($str);
     if (is_utf8($str)){

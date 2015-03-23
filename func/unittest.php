@@ -98,3 +98,15 @@ function E_NAME($level){
     );
     return isset($E_NAME[$level]) ? $E_NAME[$level] : null;
 }
+
+/*
+ * 格式化输出
+ */
+function dump($o){
+    $is_cmd = isset($_SERVER['argv']);
+    if ($is_cmd){
+        echo var_export($o,true);
+    }else{
+        echo '<pre>',var_export($o,true),"</pre>\n";
+    }
+}
