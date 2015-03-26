@@ -123,7 +123,7 @@ function fileprename($filename){
 //获取文件扩展名
 function fileext($filename,$check = false){
     if (is_file($filename)) {
-        if ($check)
+        if (!$check)
             return pathinfo($filename,PATHINFO_EXTENSION);
         $file = fopen($filename, "rb");
         $bin = fread($file, 2); //只读2字节  
