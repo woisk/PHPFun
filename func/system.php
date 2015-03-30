@@ -83,3 +83,10 @@ function wget($inputfile,$outputfile)
        return "online {$onlinefiletype} not match local {$localfiletype}";
    return 0;
 }
+
+/*
+ * 当前是否在命令行模式下
+ */
+function is_cmd(){
+    return (PHP_SAPI === 'cli') or isset($_SERVER['argv']);
+}

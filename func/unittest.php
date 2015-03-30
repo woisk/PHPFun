@@ -103,9 +103,9 @@ function E_NAME($level){
  * 格式化输出
  */
 function dump($o){
-    $is_cmd = isset($_SERVER['argv']);
+    $is_cmd = is_cmd();
     if ($is_cmd){
-        echo var_export($o,true);
+        echo var_export($o,true),"\n";
     }else{
         echo '<pre>',var_export($o,true),"</pre>\n";
     }
