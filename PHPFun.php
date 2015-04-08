@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Description of phpfun
+ * php大量自定义的方便的函数
  *
  * @author wuxiao
  * @date 20140626
@@ -69,9 +69,13 @@ class PHPFun{
     }
     
     private function lib_autoload($name){
-        $file = FUN_LIB.'class_'.strtolower($name).EXT;
-        if (!is_file($file))
-            return false;
+        $name = strtolower($name);
+        $file = FUN_LIB.'class_'.$name.EXT;
+        if (!is_file($file)){
+                if (!is_file($file = FUN_LIB.$name.DS.$name.EXT)){
+                        return false;
+                }
+        }
         include_once $file;
     }
 }

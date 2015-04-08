@@ -159,3 +159,17 @@ function is_idcard($s){
 function is_tw_idcard($s){
     return (bool)preg_match('/^^(?:\d{15}|\d{18})$$/',$s);
 }
+
+/*
+ * 按照传入的验证规则进行批量数据验证
+ */
+function validator(array $rules, array $data = null,array $customMessages = null) {
+        $validator = Validator::make($rules, $data);
+        if ($customMessages)
+                Validator::setMessage($customMessages);
+        if ($validator->fails()){
+                return $validator->messages();
+        }else{
+                return true;
+        }
+}

@@ -54,11 +54,16 @@ if (!function_exists('eq')){//获取数组中的第$index个元素
     }
 }
 
-if (!function_exists('pre')){
-    function pre($var,$func = 'var_export'){
-        echo '<pre style="text-align:left;clear:both;font-size:14px;color:black;">';
-        if (function_exists($func))
-            $func($var);
-        echo '</pre>';
-    }
+/*
+ * 格式化输出
+ */
+if (!function_exists('dump')) {
+        function dump($o) {
+                $is_cmd = ((PHP_SAPI === 'cli') or isset($_SERVER['argv']));
+                if ($is_cmd) {
+                        echo var_export($o, true), "\n";
+                } else {
+                        echo '<pre>', var_export($o, true), "</pre>\n";
+                }
+        }
 }

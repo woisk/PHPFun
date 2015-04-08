@@ -99,14 +99,9 @@ function E_NAME($level){
     return isset($E_NAME[$level]) ? $E_NAME[$level] : null;
 }
 
-/*
- * 格式化输出
- */
-function dump($o){
-    $is_cmd = is_cmd();
-    if ($is_cmd){
-        echo var_export($o,true),"\n";
-    }else{
-        echo '<pre>',var_export($o,true),"</pre>\n";
-    }
+function pre($var,$func = 'var_export'){
+    echo '<pre style="text-align:left;clear:both;font-size:14px;color:black;">';
+    if (function_exists($func))
+        $func($var);
+    echo '</pre>';
 }
