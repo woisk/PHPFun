@@ -3,6 +3,8 @@
 /**
  * A validation class
  * 
+ * 用法参考http://www.golaravel.com/laravel/docs/5.0/validation/
+ * 
  * @author wuxiao
  * @since 2015-4-7
  */
