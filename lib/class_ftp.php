@@ -5,11 +5,18 @@
  *      This is NOT a freeware, use is subject to license terms
  *
  *      $Id: discuz_ftp.php 32473 2013-01-24 07:11:38Z chenmengshu $
+ * 
+ *      $ftp = FTP::instance('115.216.196.218',21,'username','password');
+ *      if ($ftp->connect()){
+ *          $ftp->ftp_chdir('/data/www/ucenter/data/');
+ *          $ret = $ftp->ftp_put('test1.js','/data/bak/test.js');
+ *          $ret = $ftp->ftp_delete('test1.js');
+ *      }else{
+ *          echo $ftp->error();
+ *      }
+ *      $ftp->ftp_close();
  */
 
-if(!defined('IN_DISCUZ')) {
-	exit('Access Denied');
-}
 
 if(!defined('FTP_ERR_SERVER_DISABLED')) {
 	define('FTP_ERR_SERVER_DISABLED', -100);
@@ -24,7 +31,7 @@ if(!defined('FTP_ERR_SERVER_DISABLED')) {
 
 
 
-class discuz_ftp
+class FTP
 {
 
 	var $enabled = false;
@@ -34,35 +41,36 @@ class discuz_ftp
 	var $connectid;
 	var $_error;
 
-	function &instance($config = array()) {
+	//static function &instance($config = array()) {
+    static function &instance($host,$port,$username,$password,$pasv = 1,$timeout = 30,$ssl = 0) {
 		static $object;
 		if(empty($object)) {
-			$object = new discuz_ftp($config);
+			$object = new self($host,$port,$username,$password,$pasv,$timeout,$ssl);
 		}
 		return $object;
 	}
 
-	function __construct($config = array()) {
+	function __construct($host,$port,$username,$password,$pasv,$timeout,$ssl) {
 		$this->set_error(0);
-		$this->config = !$config ? getglobal('setting/ftp') : $config;
-		$this->enabled = false;
-		if(empty($this->config['on']) || empty($this->config['host'])) {
-			$this->set_error(FTP_ERR_CONFIG_OFF);
-		} else {
-			$this->func = $this->config['ssl'] && function_exists('ftp_ssl_connect') ? 'ftp_ssl_connect' : 'ftp_connect';
-			if($this->func == 'ftp_connect' && !function_exists('ftp_connect')) {
-				$this->set_error(FTP_ERR_SERVER_DISABLED);
-			} else {
-				$this->config['host'] = discuz_ftp::clear($this->config['host']);
-				$this->config['port'] = intval($this->config['port']);
-				$this->config['ssl'] = intval($this->config['ssl']);
-				$this->config['username'] = discuz_ftp::clear($this->config['username']);
-				$this->config['password'] = authcode($this->config['password'], 'DECODE', md5(getglobal('config/security/authkey')));
-				$this->config['timeout'] = intval($this->config['timeout']);
-				$this->enabled = true;
-			}
-		}
+        $this->enabled = false;
+		$this->func = $ssl && function_exists('ftp_ssl_connect') ? 'ftp_ssl_connect' : 'ftp_connect';
+        if($this->func == 'ftp_connect' && !function_exists('ftp_connect')) {
+            $this->set_error(FTP_ERR_SERVER_DISABLED);
+        } else {
+            $this->config['host'] = self::clear($host);
+            $this->config['port'] = intval($port);
+            $this->config['ssl'] = intval($ssl);
+            $this->config['username'] = self::clear($username);
+            $this->config['password'] = $password;
+            $this->config['timeout'] = intval($timeout);
+            $this->config['pasv'] = intval($pasv);
+            $this->enabled = true;
+        }
 	}
+    
+    function __destruct() {
+        $this->ftp_close();
+    }
 
 	function upload($source, $target) {
 		if($this->error()) {
@@ -77,7 +85,6 @@ class discuz_ftp
 				if(!$this->ftp_chdir($dirname)) {
 					$this->set_error(FTP_ERR_CHDIR);
 				}
-				$this->ftp_put('index.htm', getglobal('setting/attachdir').'/index.htm', FTP_BINARY);
 			} else {
 				$this->set_error(FTP_ERR_MKDIR);
 			}
@@ -107,7 +114,7 @@ class discuz_ftp
 				$this->config['host'],
 				$this->config['username'],
 				$this->config['password'],
-				$this->config['attachdir'],
+				'',
 				$this->config['port'],
 				$this->config['timeout'],
 				$this->config['ssl'],
@@ -117,19 +124,19 @@ class discuz_ftp
 
 	}
 
-	function ftp_connect($ftphost, $username, $password, $ftppath, $ftpport = 21, $timeout = 30, $ftpssl = 0, $ftppasv = 0) {
+	private function ftp_connect($ftphost, $username, $password, $ftppath, $ftpport = 21, $timeout = 30, $ftpssl = 0, $ftppasv = 0) {
 		$res = 0;
 		$fun = $this->func;
-		if($this->connectid = $fun($ftphost, $ftpport, 20)) {
+		if($this->connectid = @$fun($ftphost, $ftpport, 20)) {
 
 			$timeout && $this->set_option(FTP_TIMEOUT_SEC, $timeout);
 			if($this->ftp_login($username, $password)) {
 				$this->ftp_pasv($ftppasv);
-				if($this->ftp_chdir($ftppath)) {
-					$res =  $this->connectid;
-				} else {
-					$this->set_error(FTP_ERR_CHDIR);
-				}
+                if (!empty($ftppath) && !$this->ftp_chdir($ftppath)){
+                    $this->set_error(FTP_ERR_CHDIR);
+                }else{
+                    $res =  $this->connectid;
+                }
 			} else {
 				$this->set_error(FTP_ERR_USER_NO_LOGGIN);
 			}
@@ -150,7 +157,7 @@ class discuz_ftp
 
 	}
 
-	function set_error($code = 0) {
+	private function set_error($code = 0) {
 		$this->_error = $code;
 	}
 
@@ -158,7 +165,7 @@ class discuz_ftp
 		return $this->_error;
 	}
 
-	function clear($str) {
+	private function clear($str) {
 		return str_replace(array( "\n", "\r", '..'), '', $str);
 	}
 
@@ -170,7 +177,7 @@ class discuz_ftp
 	}
 
 	function ftp_mkdir($directory) {
-		$directory = discuz_ftp::clear($directory);
+		$directory = self::clear($directory);
 		$epath = explode('/', $directory);
 		$dir = '';$comma = '';
 		foreach($epath as $path) {
@@ -183,25 +190,25 @@ class discuz_ftp
 	}
 
 	function ftp_rmdir($directory) {
-		$directory = discuz_ftp::clear($directory);
+		$directory = self::clear($directory);
 		return @ftp_rmdir($this->connectid, $directory);
 	}
 
 	function ftp_put($remote_file, $local_file, $mode = FTP_BINARY) {
-		$remote_file = discuz_ftp::clear($remote_file);
-		$local_file = discuz_ftp::clear($local_file);
+		$remote_file = self::clear($remote_file);
+		$local_file = self::clear($local_file);
 		$mode = intval($mode);
 		return @ftp_put($this->connectid, $remote_file, $local_file, $mode);
 	}
 
 	function ftp_fput($remote_file, $sourcefp, $mode = FTP_BINARY) {
-		$remote_file = discuz_ftp::clear($remote_file);
+		$remote_file = self::clear($remote_file);
 		$mode = intval($mode);
 		return @ftp_fput($this->connectid, $remote_file, $sourcefp, $mode);
 	}
 
 	function ftp_size($remote_file) {
-		$remote_file = discuz_ftp::clear($remote_file);
+		$remote_file = self::clear($remote_file);
 		return @ftp_size($this->connectid, $remote_file);
 	}
 
@@ -210,13 +217,13 @@ class discuz_ftp
 	}
 
 	function ftp_delete($path) {
-		$path = discuz_ftp::clear($path);
+		$path = self::clear($path);
 		return @ftp_delete($this->connectid, $path);
 	}
 
 	function ftp_get($local_file, $remote_file, $mode, $resumepos = 0) {
-		$remote_file = discuz_ftp::clear($remote_file);
-		$local_file = discuz_ftp::clear($local_file);
+		$remote_file = self::clear($remote_file);
+		$local_file = self::clear($local_file);
 		$mode = intval($mode);
 		$resumepos = intval($resumepos);
 		return @ftp_get($this->connectid, $local_file, $remote_file, $mode, $resumepos);
@@ -233,17 +240,17 @@ class discuz_ftp
 	}
 
 	function ftp_chdir($directory) {
-		$directory = discuz_ftp::clear($directory);
+		$directory = self::clear($directory);
 		return @ftp_chdir($this->connectid, $directory);
 	}
 
 	function ftp_site($cmd) {
-		$cmd = discuz_ftp::clear($cmd);
+		$cmd = self::clear($cmd);
 		return @ftp_site($this->connectid, $cmd);
 	}
 
 	function ftp_chmod($filename, $mod = 0777) {
-		$filename = discuz_ftp::clear($filename);
+		$filename = self::clear($filename);
 		if(function_exists('ftp_chmod')) {
 			return @ftp_chmod($this->connectid, $mod, $filename);
 		} else {
