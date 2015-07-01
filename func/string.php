@@ -507,6 +507,8 @@ function getFirstLetter($string) {
         return strtoupper($letter{0});
     } elseif ($letter >= '0' && $letter <= '9') {
         return $letter;
+    } elseif (is_numeric($letter)) {
+        return substr($letter, 0, 1);
     } else {
         return false;
     }
