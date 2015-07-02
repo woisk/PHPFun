@@ -1,14 +1,23 @@
 <?php
 
-/* 
- * zip('test.xls',array());
+/**
+ * 根据数据生成excel文件
+ * @param type $excel
+ * @param array $data
  */
-function excel($excel,array $files = null){
+function excel($excel,array $data = null){
     ;
 }
 
 /* 
- * zip('test.zip',array('cmnet'=>'newpathname'));
+ * 
+ */
+/**
+ * 压缩文件为zip档案
+ * @param type $zip
+ * @param type $files
+ * @return type
+ * @example zip('test.zip',array('cmnet'=>'newpathname'));
  */
 function zip($zip,$files = null){
     $dir = realpath(dirname($zip));
@@ -60,6 +69,12 @@ function zip($zip,$files = null){
     return is_file($zip)?$zip:false;
 }
 
+/**
+ * 备份文件
+ * @param type $filename
+ * @param type $cover
+ * @return string
+ */
 function backup($filename,$cover = null){
     if (!is_file($filename))
         return error('source file '.$filename.' missed');
@@ -81,9 +96,17 @@ function backup($filename,$cover = null){
     return $dest;
 }
 
-/*
- * @param array $smtp_server
- * array(
+
+/**
+ * 发送邮件
+ * @param type $to 发送到
+ * @param type $subject 标题
+ * @param type $mailbody 内容
+ * @param array $smtp_server smtp服务器，格式：array('host'=>'服务器IP','port'=>'服务器端口','username'=>'用户名','password'=>'密码','fromname'=>'自定义发送者名称')
+ * @param type $SMTPSecure 是否启用安全模式，ssl/tls
+ * @return boolean
+ * 
+ * @example array(
  *  'host'=>'smtp.163.com',
  *  'username'=>'your password account like test@gmail.com',
  *  'password'=>'your email password',
@@ -91,7 +114,6 @@ function backup($filename,$cover = null){
  *  'fromname'=>'wuxiao'
  * )
  */
-//发邮件
 function email_send($to,$subject,$mailbody,array $smtp_server,$SMTPSecure = '') {
     $mail = new PHPMailer(); //建立邮件发送类
     $mail->CharSet = "utf-8";

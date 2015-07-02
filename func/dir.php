@@ -1,6 +1,10 @@
 <?php
 
-//创建文件夹
+/**
+ * 创建文件夹
+ * @param type $dir
+ * @return boolean|int
+ */
 function mk_dir($dir) {
     if (is_dir($dir))
         return $dir;        //目录已经存在直接返回目录
@@ -17,10 +21,21 @@ function mk_dir($dir) {
     }
 }
 
+/**
+ * 相当于linux下的ls命令
+ * @param type $pattern
+ * @return type
+ */
 function ls($pattern = '*'){
     return glob($pattern);
 }
 
+/**
+ * 根据名称在目录下查找文件&文件夹
+ * @param string $pattern
+ * @param string $dir
+ * @return type
+ */
 function find($pattern,$dir = __ROOT__){
     $dir = trim($dir,'/\\').DS;
     if (!is_dir($dir))
@@ -35,6 +50,12 @@ function find($pattern,$dir = __ROOT__){
     return $matches;
 }
 
+/**
+ * 根据名称在目录下查找文件夹
+ * @param string $pattern
+ * @param string $dir
+ * @return type
+ */
 function finddir($pattern,$dir = __ROOT__){
     $dir = trim($dir,'/\\').DS;
     if (!is_dir($dir))
@@ -50,6 +71,12 @@ function finddir($pattern,$dir = __ROOT__){
     return $matches;
 }
 
+/**
+ * 根据名称在目录下查找文件
+ * @param string $pattern
+ * @param string $dir
+ * @return type
+ */
 function findfile($pattern,$dir = __ROOT__){
     $dir = trim($dir,'/\\').DS;
     if (!is_dir($dir))
