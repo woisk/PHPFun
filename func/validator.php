@@ -23,7 +23,7 @@ function is_utf8($word) {
 
 /*检测是否有中文字符*/
 function is_chinese($s){
-    return (bool)(preg_match('/[\x80-\xff]./', $s) || preg_match('/[\u4e00-\u9fa5]./', $s));
+    return (bool)(preg_match('/[\x80-\xff]./', $s) || preg_match('/[\x{4e00}-\x{9fa5}]./', $s));
 }
 
 //是否是ACSII字符，即双字节字符(包括汉字在内)

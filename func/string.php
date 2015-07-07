@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * 获取字符串长度
+ * @param type $str
+ * @return int
+ */
 function length($str) {
     $str = (string)$str;
     if (function_exists('mb_strlen'))
@@ -21,6 +26,12 @@ function length($str) {
 	return $count;
 }
 
+/**
+ * 返回随机字符串，数字/大写字母/小写字母
+ * @param type $len
+ * @param type $format
+ * @return type
+ */
 function random($len = 6, $format = 'ALL') {
 	switch (strtoupper($format)) {
 		case 'ALL' :
@@ -42,7 +53,14 @@ function random($len = 6, $format = 'ALL') {
 	return $string;
 }
 
-//截取一定长度的字符串，确保截取后字符串不出乱码
+/**
+ * 截取一定长度的字符串，确保截取后字符串不出乱码
+ * @param type $string
+ * @param type $length
+ * @param type $dot
+ * @param type $charset
+ * @return type
+ */
 function cutstr($string, $length, $dot = ' ...', $charset = 'utf-8') {
 	if(strlen($string) <= $length) {
 		return $string;
@@ -106,6 +124,15 @@ function cutstr($string, $length, $dot = ' ...', $charset = 'utf-8') {
 	return $strcut.$dot;
 }
 
+/**
+ * 来自destoon的字符串截取函数，
+ * @param type $string
+ * @param type $length
+ * @param type $start
+ * @param type $suffix
+ * @param type $charset
+ * @return type
+ */
 function dsubstr($string, $length, $start = 0, $suffix = '', $charset = 'UTF-8') {
 	if($start = intval($start)) {
 		$tmp = dsubstr($string, $start);
@@ -148,7 +175,11 @@ function dsubstr($string, $length, $start = 0, $suffix = '', $charset = 'UTF-8')
 	return $str == $string ? $str : $str.$suffix;
 }
 
-//将内容进行UNICODE编码，编码后的内容格式：YOKA\王 （原始：YOKA王）
+/**
+ * 将内容进行UNICODE编码，编码后的内容格式：YOKA\王 （原始：YOKA王）
+ * @param type $s
+ * @return type
+ */
 function unicodeencode($s) {
 	$s = iconv ( 'UTF-8', 'UCS-2', $s );
 	$len = strlen ( $s );
@@ -165,7 +196,11 @@ function unicodeencode($s) {
 	return $str;
 }
 
-//unicode解码
+/**
+ * unicode解码
+ * @param type $str
+ * @return type
+ */
 function unicodedecode($str) {
 	preg_match_all ( '/\\\u([[:alnum:]]{4})/', $str, $a );
 	foreach ( $a [1] as $uniord ) {
@@ -186,6 +221,12 @@ function unicodedecode($str) {
 	return ($str);
 }
 
+/**
+ * xml编码, array => xml
+ * @param array $array
+ * @param type $main
+ * @return string
+ */
 function xmlencode(array $array,$main = 'xml'){
     $xml = '<?xml version="1.0"?>'."\r\n";
     $xml .= '<'.$main.'>'."\r\n";
@@ -209,6 +250,11 @@ function xmlencode(array $array,$main = 'xml'){
     return $xml;
 }
 
+/**
+ * xml解码, xml => array
+ * @param type $str
+ * @return type
+ */
 function xmldecode($str){
     $data = simplexml_load_string($str);
     function xml_decode($data){
@@ -224,6 +270,7 @@ function xmldecode($str){
 }
 
 /* 
+ * xml档案转换到数组, xml => array
  * @from http://us3.php.net/manual/en/function.xml-parse.php
  * @param string $target 解析对象，可以是文件路径/URL地址
  */
@@ -366,6 +413,12 @@ function xml2array($target, $get_attributes = 1, $priority = 'tag')
     return ($xml_array);
 }
 
+/**
+ * 返回字符串的拼音
+ * @param type $_String
+ * @param type $_Code
+ * @return type
+ */
 function pinyin($_String, $_Code = 'UTF8') { //GBK页面可改为gb2312，其他随意填写为UTF8
     $_DataKey = "a|ai|an|ang|ao|ba|bai|ban|bang|bao|bei|ben|beng|bi|bian|biao|bie|bin|bing|bo|bu|ca|cai|can|cang|cao|ce|ceng|cha" .
             "|chai|chan|chang|chao|che|chen|cheng|chi|chong|chou|chu|chuai|chuan|chuang|chui|chun|chuo|ci|cong|cou|cu|" .
@@ -460,6 +513,9 @@ function _U2_Utf8_Gb($_C) {
     }
     return iconv('UTF-8', 'GBK//IGNORE', $_String);
 }
+/*
+ * END 返回字符串的拼音
+ */
 
 /**
  * 获取字符串首字母, 可传入汉字，字母 ，数字
@@ -578,4 +634,43 @@ function getCurrency($currency) {
             break;
     }
     return $currency_symbol;
+}
+
+/**
+ * 全角字符转换为半角 
+ * @param type $str 传入要转换的字符串
+ * @param type $sbc2dbc 0：全角转半角， 1： 半角转全角
+ * @return boolean
+ */
+function dbc2sbc($str, $sbc2dbc = 0, $key = null) {
+        $dbc2sbc = array (
+                '０' => '0','１' => '1','２' => '2', '３' => '3',
+                '４' => '4','５' => '5','６' => '6','７' => '7',
+                '８' => '8','９' => '9','Ａ' => 'A','Ｂ' => 'B',
+                'Ｃ' => 'C','Ｄ' => 'D','Ｅ' => 'E','Ｆ' => 'F',
+                'Ｇ' => 'G','Ｈ' => 'H','Ｉ' => 'I','Ｊ' => 'J',
+                'Ｋ' => 'K','Ｌ' => 'L','Ｍ' => 'M','Ｎ' => 'N',
+                'Ｏ' => 'O','Ｐ' => 'P','Ｑ' => 'Q','Ｒ' => 'R',
+                'Ｓ' => 'S','Ｔ' => 'T','Ｕ' => 'U','Ｖ' => 'V',
+                'Ｗ' => 'W','Ｘ' => 'X','Ｙ' => 'Y','Ｚ' => 'Z',
+                'ａ' => 'a','ｂ' => 'b','ｃ' => 'c','ｄ' => 'd',
+                'ｅ' => 'e','ｆ' => 'f','ｇ' => 'g','ｈ' => 'h',
+                'ｉ' => 'i','ｊ' => 'j','ｋ' => 'k','ｌ' => 'l',
+                'ｍ' => 'm','ｎ' => 'n','ｏ' => 'o','ｐ' => 'p',
+                'ｑ' => 'q','ｒ' => 'r','ｓ' => 's','ｔ' => 't',
+                'ｕ' => 'u','ｖ' => 'v','ｗ' => 'w','ｘ' => 'x',
+                'ｙ' => 'y','ｚ' => 'z','－' => '-','　' => ' ',
+                '：' => ':','．' => '.','，' => ',','／' => '/',
+                '％' => '%','＃' => '#','！' => '!','＠' => '@',
+                '＆' => '&','（' => '(','）' => ')','＜' => '<',
+                '＞' => '>','＂' => '"','＇' => '\'','？' => '?',
+                '［' => '[','］' => ']','｛' => '{','｝' => '}',
+                '＼' => '\\','｜' => '|','＋' => '+','＝' => '=',
+                '＿' => '_','＾' => '^','￥' => '$','￣' => '~',
+                '｀' => '`',
+        );
+        if ($sbc2dbc){
+                $dbc2sbc = array_flip($dbc2sbc);
+        }
+        return strtr($str, $arr); 
 }

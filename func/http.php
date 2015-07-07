@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * 处理$_FILES上传的文件，返回文件本地路径
+ * @param type $name
+ * @param type $UploadDir
+ * @param type $datedir
+ * @return boolean
+ */
 function upload($name, $UploadDir = 'upload', $datedir = true) {
     if (empty($_FILES) || !isset($_FILES[$name]))
         return false;
@@ -52,7 +59,12 @@ function redirect($url, $time=0, $msg='') {
     }
 }
 
-//获得当前页面的域名，可以带上自定义uri
+/**
+ * 获得当前页面的域名，可以带上自定义uri
+ * @param type $uri
+ * @param type $pre
+ * @return type
+ */
 function domain($uri = '',$pre = 'http'){
     if (isset($_SERVER['SERVER_NAME']))
         $domain = $_SERVER['SERVER_NAME'];
@@ -64,7 +76,10 @@ function domain($uri = '',$pre = 'http'){
     return $pre.'://'.$domain.'/'.$uri;
 }
 
-//获得当前页面的完整url
+/**
+ * 获得当前页面的完整url
+ * @return type
+ */
 function url(){
     $url = (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == '443') ? 'https://' : 'http://';
     $url .= isset($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:$_SERVER['HTTP_HOST'];
@@ -72,7 +87,11 @@ function url(){
     return $url;
 }
 
-//获取顶级域名
+/**
+ * 获取url字符串中的顶级域名部分
+ * @param type $url
+ * @return type
+ */
 function topdomain($url) {
     $host = strtolower($url);
     if (strpos($host, '/') !== false) {
@@ -94,7 +113,12 @@ function topdomain($url) {
     return $domain;
 }
 
-//返回$_POST
+/**
+ * 返回$_POST内容
+ * @param type $key
+ * @param type $default
+ * @return type
+ */
 function post($key = null, $default = null) {
     $o = $_POST;
     if (!empty($o))
@@ -104,7 +128,12 @@ function post($key = null, $default = null) {
     return $o;
 }
 
-//返回$_GET
+/**
+ * 返回$_GET内容
+ * @param type $key
+ * @param type $default
+ * @return type
+ */
 function get($key = null, $default = null) {
     $o = $_GET;
     if (!empty($o))
@@ -114,7 +143,12 @@ function get($key = null, $default = null) {
     return $o;
 }
 
-//返回$_REQUEST
+/**
+ * 返回$_REQUEST内容
+ * @param type $key
+ * @param type $default
+ * @return type
+ */
 function request($key = null, $default = null) {
     $o = $_REQUEST;
     if (!empty($o))
@@ -124,7 +158,10 @@ function request($key = null, $default = null) {
     return $o;
 }
 
-//获取ip地址
+/**
+ * 获取ip地址
+ * @return type
+ */
 function getip(){
     $onlineipmatches = array();
     if(getenv('HTTP_CLIENT_IP') && strcasecmp(getenv('HTTP_CLIENT_IP'), 'unknown')) {
@@ -143,7 +180,10 @@ function getip(){
     return $onlineip;
 }
 
-//在线获取服务器端IP
+/**
+ * 在线获取服务器端IP
+ * @return type
+ */
 function localip() {
     if (extension_loaded('curl')) {
         $ch = curl_init('http://www.ip138.com/ips138.asp');
@@ -166,6 +206,14 @@ function localip() {
     return error('[web\localip] cannot get any ip by preg match');
 }
 
+/**
+ * CURL
+ * @param type $url
+ * @param type $post
+ * @param type $cookies
+ * @param type $headers
+ * @return boolean
+ */
 function curl($url, $post = null,$cookies = null,$headers = null) {
     if (!$url)
         return false;
@@ -206,6 +254,11 @@ function curl($url, $post = null,$cookies = null,$headers = null) {
     return $result;
 }
 
+/**
+ * CURL
+ * @param array $urls
+ * @return boolean
+ */
 function curl_multi(array $urls) {
     if (empty($urls))
         return false;
@@ -241,7 +294,11 @@ function curl_multi(array $urls) {
     return  $ret;
 }
 
-//url是否存在
+/**
+ * 检查url资源是否存在
+ * @param type $url
+ * @return boolean
+ */
 function url_exists($url)  
 {  
    $parts = parse_url($url);  
@@ -320,6 +377,11 @@ function url_exists($url)
    return (($code >= 200) && ($code < 400));  
 }
 
+/**
+ * 获得线上文件的大小
+ * @param type $url
+ * @return null
+ */
 function online_filesize($url) {
     if (function_exists('curl_init'))
     {
@@ -371,6 +433,11 @@ function online_filesize($url) {
     }
 }
 
+/**
+ * 获得线上文件的类型
+ * @param type $url
+ * @return null
+ */
 function online_filetype($url) {
     if (function_exists('curl_init'))
         {
@@ -409,6 +476,14 @@ function online_filetype($url) {
         return null;
 }
 
+/**
+ * 通过CURL向指定的url路径上传文件
+ * @param type $url
+ * @param type $file
+ * @param type $postFields
+ * @param type $fieldname
+ * @return boolean
+ */
 function curl_upload($url, $file, $postFields = null, $fieldname = 'file') {
     if (!function_exists('curl_init'))
         return false;
@@ -447,6 +522,13 @@ function curl_upload($url, $file, $postFields = null, $fieldname = 'file') {
     return $return_data;
 }
 
+/**
+ * file_get_contents改进版
+ * @param type $path
+ * @param type $timeout
+ * @param type $post
+ * @return type
+ */
 function file_get_contents_v2($path, $timeout = 120, $post = array()) {
     if (strpos($path, 'http') === 0) {
         $default_socket_timeout = ini_get('default_socket_timeout');

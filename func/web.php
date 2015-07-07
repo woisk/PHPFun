@@ -1,6 +1,10 @@
 <?php
 
-//弹出警报
+/**
+ * 弹出提示
+ * @param type $msg 提示文字
+ * @param type $url 弹出提示后跳转页面
+ */
 function alert($msg = null, $url = null) {
     $session_key = 'alert_message';
     //echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />';
@@ -21,6 +25,12 @@ function alert($msg = null, $url = null) {
     }
 }
 
+/**
+ * 延迟跳转
+ * @param type $url 跳转地址
+ * @param type $timeout 延迟时间，秒为单位
+ * @param type $msg 跳转前显示的提示文字
+ */
 function delay($url = '/',$timeout = 5,$msg = ''){
     if (intval($timeout) <= 0)
         return error('wrong timeout setting <'.$timeout.'>');

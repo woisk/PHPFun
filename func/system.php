@@ -26,7 +26,11 @@ function nodebug() {
     error_reporting(0);
 }
 
-//操作session
+/**
+ * 操作session
+ * @param type $key
+ * @param type $value
+ */
 function session($key, $value = null) {
     if ((!$session_Id = session_id()) && !headers_sent()) {
         session_start();
