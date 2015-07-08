@@ -1,6 +1,8 @@
 <?php
 
-//是否是json
+/**
+ * 是否是json
+ */
 if (!function_exists('is_json')){
     function is_json($str){
         if (is_null(json_decode($str))
@@ -12,7 +14,11 @@ if (!function_exists('is_json')){
     }
 }
 
-// Returns true if $string is valid UTF-8 and false otherwise.
+/**
+ * 判断字符串是否是utf8格式
+ * @param type $word
+ * @return boolean
+ */
 function is_utf8($word) {
     if (preg_match("/^([" . chr(228) . "-" . chr(233) . "]{1}[" . chr(128) . "-" . chr(191) . "]{1}[" . chr(128) . "-" . chr(191) . "]{1}){1}/", $word) == true || preg_match("/([" . chr(228) . "-" . chr(233) . "]{1}[" . chr(128) . "-" . chr(191) . "]{1}[" . chr(128) . "-" . chr(191) . "]{1}){1}$/", $word) == true || preg_match("/([" . chr(228) . "-" . chr(233) . "]{1}[" . chr(128) . "-" . chr(191) . "]{1}[" . chr(128) . "-" . chr(191) . "]{1}){2,}/", $word) == true) {
         return true;
@@ -160,8 +166,13 @@ function is_tw_idcard($s){
     return (bool)preg_match('/^^(?:\d{15}|\d{18})$$/',$s);
 }
 
-/*
+/**
  * 按照传入的验证规则进行批量数据验证
+ * @param array $rules 传入的验证规则
+ * @param array $data 待验证的数据
+ * @param array $customMessages 自定义校验提示
+ * @return boolean
+ * @demo /lib/validator/demo.php
  */
 function validator(array $rules, array $data = null,array $customMessages = null) {
         $validator = Validator::make($rules, $data);

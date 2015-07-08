@@ -1,6 +1,9 @@
 <?php
 
-//所有mime和扩展名对应
+/**
+ * 返回所有mime和扩展名对应数组
+ * @return array
+ */
 function mime() {
     return array(
         'application/internet-property-stream' => 'acx',
@@ -337,7 +340,10 @@ function mime() {
     );
 }
 
-//所有user_agent
+/**
+ * 所有user_agent
+ * @return array
+ */
 function useragent() {
     return array(
         'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0',
@@ -417,6 +423,7 @@ function useragent() {
 
 /**
  * 中文汉字对应的拼音字典
+ * @return array
  */
 function pydict() {
     return array(

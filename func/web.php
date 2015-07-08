@@ -44,8 +44,9 @@ function delay($url = '/',$timeout = 5,$msg = ''){
     },1000)</script>';
 }
 
-/*
- * 生成验证码图像
+/**
+ * $format生成验证码图像
+ * @param string $format 随机字符串类型，ALL：大小写英文、数字，CHAR：大小写英文，NUMBER：纯数字
  */
 function verifycode($format = ''){
     include FUN_LIB.'verifycode'.EXT;
@@ -130,7 +131,11 @@ function t($text, $parse_br = false, $quote_style = ENT_NOQUOTES) {
     return $text;
 }
 
-//输出安全的html，最快速，危险代码全部删光
+/**
+ * 输出安全的html，最快速，危险代码全部删光
+ * @param type $text
+ * @param type $tags
+ */
 function h($text, $tags = null) {
     $text = trim($text);
     $text = preg_replace('/<!--?.*-->/', '', $text);
@@ -275,7 +280,10 @@ function RemoveXSS($val) {
     return $val;
 }
 
-//Discuz系统中 防止XSS漏洞攻击，过滤HTML危险标签属性的PHP函数，效率中等，效果中等
+/**
+ * Discuz系统中 防止XSS漏洞攻击，过滤HTML危险标签属性的PHP函数，效率中等，效果中等
+ * @param type $html
+ */
 function checkhtml($html) {
 	preg_match_all("/\<([^\<]+)\>/is", $html, $ms);
 
@@ -317,7 +325,12 @@ function checkhtml($html) {
 	return $html;
 }
 
-//Discuz系统中的htmlspecialchars函数升级版 
+/**
+ * Discuz系统中的htmlspecialchars函数升级版 
+ * @param type $string
+ * @param type $flags
+ * @param type $charset
+ */
 function dhtmlspecialchars($string, $flags = null, $charset = 'utf-8') {
 	if(is_array($string)) {
 		foreach($string as $key => $val) {

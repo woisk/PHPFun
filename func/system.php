@@ -1,6 +1,12 @@
 <?php
 
-//load php extension
+/**
+ * 载入php扩展
+ * @param string $ext
+ * @param string $or_ext
+ * @return boolean
+ * @example load('redis);
+ */
 function load($ext,$or_ext = null){
 	if (extension_loaded($ext)) return true;
 	if (!function_exists('dl')){
@@ -16,11 +22,18 @@ function load($ext,$or_ext = null){
             return error('loads extension '.$or_ext.' failed');
 }
 
+/**
+ * 开启php错误提示
+ * @param type $level
+ */
 function debug($level = E_ALL){
     ini_set('display_errors',true);
     error_reporting($level);
 }
 
+/**
+ * 关闭php错误提示
+ */
 function nodebug() {
     ini_set('display_errors', false);
     error_reporting(0);
@@ -49,6 +62,13 @@ function session($key, $value = null) {
     return isset($_SESSION[$key]);
 }
 
+/**
+ * 存储/获取缓存
+ * @param type $key
+ * @param type $value
+ * @param type $lifetime
+ * @return type
+ */
 function cache($key, $value = null,$lifetime = 3600){
     $cache = new Cached;
     if ($value === '') {
@@ -60,9 +80,12 @@ function cache($key, $value = null,$lifetime = 3600){
     return $cache->set($key, $value,$lifetime);
 }
 
-/*
-* 从网络传输文件
-*/
+/**
+ * 从网络传输文件，直接使用linux的wget命令
+ * @param type $inputfile 来源地址
+ * @param type $outputfile 输出文件路径
+ * @return int
+ */
 function wget($inputfile,$outputfile)
 {
    //在线获取文件类型
@@ -89,7 +112,7 @@ function wget($inputfile,$outputfile)
 }
 
 /*
- * 当前是否在命令行模式下
+ * 判断当前是否在命令行模式下
  */
 function is_cmd(){
     return (PHP_SAPI === 'cli') or isset($_SERVER['argv']);

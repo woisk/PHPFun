@@ -1,9 +1,22 @@
 <?php
+/**
+ * 性能单元测试
+ * @package unittest
+ */
+
 
 $GLOBALS['runtime'] = array();
 $GLOBALS['auto_render'] = 'render';
 $GLOBALS['unittest_string_length'] = 0;
 
+/**
+ * 单元测试开始
+ * @global array $runtime
+ * @global type $auto_render
+ * @param string $tag
+ * @param type $render
+ * @return type
+ */
 function ut_start($tag = null,$render = null){
     global $runtime,$auto_render;
     ob_start();
@@ -21,6 +34,14 @@ function ut_start($tag = null,$render = null){
     return $runtime;
 }
 
+/**
+ * 单元测试结束
+ * @global array $runtime
+ * @global type $startLength
+ * @param type $tag
+ * @param type $render
+ * @return type
+ */
 function ut_end($tag = null,$render = null){
     $endMemory = memory_get_usage();
     $endTime = microtime(true);
@@ -67,15 +88,18 @@ function ut_end($tag = null,$render = null){
     unset($runtime[$tag]);
 }
 
-/*
- * 启动whoops，适用于PHP环境的错误捕获与调试的PHP库
+/**
+ * 启动whoops，一个适用于PHP环境的错误捕获与调试的PHP库
+ * @param type $pretty 是否展示用户友好界面
  */
 function whoops($pretty = true){
     $whoops = new whoops($pretty);
 }
 
-/*
+/**
  * 返回错误等级/类型对应的PHP常量名
+ * @param type $level 错误等级/类型
+ * @return string
  */
 function E_NAME($level){
     $E_NAME = array(
@@ -99,6 +123,11 @@ function E_NAME($level){
     return isset($E_NAME[$level]) ? $E_NAME[$level] : null;
 }
 
+/**
+ * 格式化输出
+ * @param type $var 要输出的数据
+ * @param type $func 格式化所用的函数，默认使用var_export
+ */
 function pre($var,$func = 'var_export'){
     echo '<pre style="text-align:left;clear:both;font-size:14px;color:black;">';
     if (function_exists($func))

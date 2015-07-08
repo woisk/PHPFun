@@ -1,6 +1,8 @@
 <?php
 
-//fsocket_open function
+/**
+ * 复杂版的socket交互函数
+ */
 function http_request(
     $verb = 'GET',             /* HTTP Request Method (GET and POST supported) */ 
     $ip,                       /* Target IP/Hostname */ 
@@ -80,7 +82,9 @@ function http_request(
     return $ret; 
 }
 
-//fsocket_open function
+/**
+ * 简单版的socket交互函数
+ */
 function socket_request(
     $ip,                       /* Target IP/Hostname */ 
     $port = 80,                /* Target TCP port */ 
@@ -104,8 +108,9 @@ function socket_request(
     return $ret;
 }
 
-/* php://input function
- * to use:
+/* 发送字节流数据
+ * 
+ * 接收端如何接收：
  * file_get_contents("php://input");
  */
 function phpinput(
