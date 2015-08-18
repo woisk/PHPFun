@@ -357,3 +357,57 @@ function dhtmlspecialchars($string, $flags = null, $charset = 'utf-8') {
 	}
 	return $string;
 }
+
+/**
+ * 加载js，内带一些常用组件cdn地址
+ * @example 
+ * js('jquery')
+ */
+function js(){
+    static $jn = 0;
+    $args = func_get_args();
+    if (empty($args)){
+        return false;
+    }
+    
+    $cdn = array(
+        'jquery'=>'https://cdn.rawgit.com/shiyangwu520/cdn/master/jquery-1.8.3.min.js',
+        'jquery1.7'=>'https://cdn.rawgit.com/shiyangwu520/cdn/master/jquery-1.7.2.min.js',
+        'jquery1.8'=>'https://cdn.rawgit.com/shiyangwu520/cdn/master/jquery-1.8.3.min.js',
+        'jquery1.9'=>'https://cdn.rawgit.com/shiyangwu520/cdn/master/jquery-1.9.1.min.js',
+        'phpjs'=>'https://cdn.rawgit.com/shiyangwu520/cdn/master/php.js',
+    );
+    
+    foreach ($args as $js){
+        if (!empty($cdn[$js])){
+            $js = $cdn[$js];
+        }
+        echo "<script type='text/javascript' src='{$js}'></script>\n";
+        $jn ++;
+    }
+    return $jn;
+}
+
+/**
+ * 加载css，内带一些常用样式
+ * @example 
+ * css('bootstrap')
+ */
+function css(){
+    static $cn = 0;
+    $args = func_get_args();
+    if (empty($args)){
+        return false;
+    }
+    
+    $cdn = array();
+    
+    foreach ($args as $css){
+        if (!empty($cdn[$css])){
+            $css = $cdn[$css];
+        }
+        echo "<link rel='stylesheet' type='text/css' href='{$css}' media='all' />\n";
+        $cn ++;
+    }
+    return $cn;
+}
