@@ -375,6 +375,7 @@ function js(){
         'jquery1.7'=>'https://cdn.rawgit.com/shiyangwu520/cdn/master/jquery-1.7.2.min.js',
         'jquery1.8'=>'https://cdn.rawgit.com/shiyangwu520/cdn/master/jquery-1.8.3.min.js',
         'jquery1.9'=>'https://cdn.rawgit.com/shiyangwu520/cdn/master/jquery-1.9.1.min.js',
+        'jqueryui1.11'=>'https://cdn.rawgit.com/shiyangwu520/cdn/master/jquery-ui-1.11.4.min.js',
         'phpjs'=>'https://cdn.rawgit.com/shiyangwu520/cdn/master/php.js',
     );
     
@@ -400,7 +401,9 @@ function css(){
         return false;
     }
     
-    $cdn = array();
+    $cdn = array(
+        'jqueryui1.11'=>'https://cdn.rawgit.com/shiyangwu520/cdn/master/jquery-ui-1.11.4.css',
+    );
     
     foreach ($args as $css){
         if (!empty($cdn[$css])){
