@@ -61,10 +61,9 @@ function uc_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
 /**
  * 注入预防
  * @param type $value
- * @param type $key
  * @return boolean
  */
-function DOkillinject(&$value, $key) {
+function DOkillinject(&$value) {
     if (!is_string($value))
         return false;
 
