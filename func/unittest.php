@@ -52,7 +52,7 @@ function ut_end($tag = null,$render = null){
         return error('there is no any unittest initialize');
     if ($tag === null){
         $keys = array_keys($runtime);
-        $tag = ut_end($keys);
+        $tag = current($keys);
     }elseif (!isset($runtime[$tag]))
         return error('unittest tag <'.$tag.'> not exists');
     
@@ -66,7 +66,7 @@ function ut_end($tag = null,$render = null){
     $trace = array();
     foreach($bt as $k=>$v){
         list($class,$type,$function,$file,$line)
-                = array(get($v,'class'),get($v,'type'),get($v,'function'),get($v,'file'),get($v,'line'));
+                = array(got($v,'class'),got($v,'type'),got($v,'function'),got($v,'file'),got($v,'line'));
         $trace[] = "#$k {$class}{$type}{$function}() called at [{$file}:{$line}]";
     }
     if ($result['render'] === 'render'){
