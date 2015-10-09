@@ -1,16 +1,16 @@
-php大量自定义的方便的函数
+//php大量自定义的方便的函数
     
-    include_once './PHPFun/vendor/autoload.php';
-    $phpfun = new PHPFun();
+include_once './PHPFun/vendor/autoload.php';
+$phpfun = new PHPFun();
 
-	ut_start();
+ut_start();
 
-	whoops();
-	debug();
+whoops();
+debug();
 
-	js('jquery');
-	alert('begin!');
+js('jquery');
+alert('begin!');
 
-	echo domain();
+echo domain();
 
-	ut_end();
+ut_end();
