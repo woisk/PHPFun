@@ -2,11 +2,30 @@
 
 /**
  * 根据数据生成excel文件
- * @param type $excel
+ * @param string $excel
  * @param array $data
+ * @param string $writerType 文档类型，Excel2007(后缀xlsx)/Excel5(后缀xls)
+ * @example excel('test.xlsx',array(array('id','name','createtime'),array(1,'wuxiao','2015-10-9 10:48')));
+ * @example excel('test.xls',array(array('id','name','createtime'),array(1,'wuxiao','2015-10-9 10:48')),'Excel5');
  */
-function excel($excel,array $data = null){
-    ;
+function excel($excel,array $data = null, $writerType = 'Excel2007'){
+    $objPHPExcel = new PHPExcel();
+    $objPHPExcel->setActiveSheetIndex(0);
+    $r = 1;
+    foreach ($data as $row){
+        $c = 'A';
+        foreach ($row as $cell){
+            $pCoordinate = "{$c}{$r}";
+            $objPHPExcel->getActiveSheet()->setCellValue($pCoordinate, $cell)
+                //auto width
+                ->getColumnDimension($c)->setAutoSize(true);
+            $c++;
+        }
+        $r++;
+    }
+    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, $writerType);
+    $objWriter->save($excel);
+    return is_file($excel)?$excel:false;
 }
 
 /* 
@@ -14,10 +33,14 @@ function excel($excel,array $data = null){
  */
 /**
  * 压缩文件为zip档案
- * @param type $zip
- * @param type $files
- * @return type
- * @example zip('test.zip',array('cmnet'=>'newpathname'));
+ * @param string $zip
+ * @param array $files
+ * @return bool/string
+ * @example
+ * zip('压缩包文件名全名',array('要压缩的文件'=>'在压缩包中的新路径'));
+ * zip('test.zip',array('jquery-1.11.1.min.js'=>'js/jquery'));
+ * zip('test.zip',array('jquery-1.11.1.min.js','jquery-1.8.3.min.js'));
+ * zip('test.zip','jquery-1.11.1.min.js');
  */
 function zip($zip,$files = null){
     $dir = realpath(dirname($zip));
