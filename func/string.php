@@ -477,9 +477,13 @@ function pinyin($_String, $_Code = 'UTF8') { //GBK页面可改为gb2312，其他
             $_Q = ord(substr($_String, ++$i, 1));
             $_P = $_P * 256 + $_Q - 65536;
         }
-        $_Res .= _Pinyin($_P, $_Data);
+        $_Res .= _Pinyin($_P, $_Data) ? : _Dict($_P);
     }
     return preg_replace("/[^a-z0-9]*/", '', $_Res);
+}
+function _Dict($_Num) {
+    $_Dict = array(-2354=>'xin');
+    return isset($_Dict[$_Num]) ? $_Dict[$_Num] : '';
 }
 function _Pinyin($_Num, $_Data) {
     if ($_Num > 0 && $_Num < 160) {
