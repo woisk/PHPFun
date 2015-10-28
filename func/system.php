@@ -117,3 +117,31 @@ function wget($inputfile,$outputfile)
 function is_cmd(){
     return (PHP_SAPI === 'cli') or isset($_SERVER['argv']);
 }
+
+/**
+ * 添加非守护进程
+ * @return type
+ */
+function fork(){
+    $child_threads = func_get_args();
+    $t = new Thread;
+    foreach ($child_threads as $child_thread){
+        $t->fork($child_thread);
+    }
+    $t->run();
+    return $t->getpid();
+}
+
+/**
+ * 添加守护进程
+ * @return type
+ */
+function daemon(){
+    $child_threads = func_get_args();
+    $t = new Thread;
+    foreach ($child_threads as $child_thread){
+        $t->daemon($child_thread);
+    }
+    $t->run();
+    return $t->getpid();
+}
