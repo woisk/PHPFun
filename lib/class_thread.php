@@ -47,7 +47,7 @@ class Thread{
      * @return array
      */
     public function getpid(){
-        return $this->pid;
+        return array_values($this->pid);
     }
     
     /**
@@ -73,7 +73,7 @@ class Thread{
             }else{
                 if ($pid > 0){
                     //父进程
-                    $this->pid[] = $pid;
+                    $this->pid[$pid] = $pid;
                     return $pid;
                 }else{
                     //子进程
@@ -108,7 +108,7 @@ class Thread{
             }else{
                 if ($pid > 0){
                     //父进程
-                    $this->pid[] = $pid;
+                    $this->pid[$pid] = $pid;
                     $this->monitor[$pid] = $child_thread;
                     return $pid;
                 }else{
@@ -133,26 +133,50 @@ class Thread{
             $this->daemon($child_thread,true);
         }
         
+        //安装信号处理器
+        $this->signalhandle();
+        //开始监控子进程
         $this->monitor();
+    }
+    
+    /**
+     * 杀死所有子进程
+     */
+    private function killall(){
+        foreach ($this->getpid() as $pid){
+            @posix_kill($pid, SIGINT);
+        }
+        exit;
+    }
+    
+    /**
+     * 信号处理器
+     */
+    private function signalhandle(){
+        pcntl_signal(SIGTERM, array($this,'killall'));//KILL命令的默认不带参数发送的信号就是SIGTERM
+        pcntl_signal(SIGINT, array($this,'killall'));//ctrl+c
     }
     
     /**
      * 开始监控守护进程，中断则马上重启
      * @return type
      */
-    public function monitor(){
-        if (!count($this->monitor)){
-            return;
-        }
-        
+    private function monitor(){        
         do{
-            usleep(100000);
+            usleep(500000);
+            //立刻返回子进程状态，-1表示检查所有子进程
             $pid = pcntl_waitpid(-1,$status ,WNOHANG || WUNTRACED);
+            //调用等待信号的处理器 
+            pcntl_signal_dispatch();
         }while(($pid <= 0) || !isset($this->monitor[$pid]));
         
-        $child_thread = $this->monitor[$pid];
-        $this->daemon($child_thread,true);
-        unset($this->monitor[$pid]);
+        if (!empty($this->monitor[$pid])){
+            $child_thread = $this->monitor[$pid];
+            $this->daemon($child_thread,true);
+            unset($this->monitor[$pid]);
+        }
+        unset($this->pid[$pid]);
+        
         $this->monitor();
     }
 }
