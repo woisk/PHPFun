@@ -155,6 +155,7 @@ class Thread{
     private function signalhandle(){
         pcntl_signal(SIGTERM, array($this,'killall'));//KILL命令的默认不带参数发送的信号就是SIGTERM
         pcntl_signal(SIGINT, array($this,'killall'));//ctrl+c
+        @pcntl_signal(SIGKILL, array($this,'killall'));//kill -9，强制
     }
     
     /**
