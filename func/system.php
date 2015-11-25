@@ -69,7 +69,7 @@ function session($key, $value = null) {
  * @param type $lifetime
  * @return type
  */
-function cache($key, $value = null,$lifetime = 3600){
+function cache($key, $value = null, $lifetime = 3600){
     $cache = new Cached;
     if ($value === '') {
         return $cache->delete($key);
@@ -78,6 +78,22 @@ function cache($key, $value = null,$lifetime = 3600){
         return $cache->get($key);
     }
     return $cache->set($key, $value,$lifetime);
+}
+
+/**
+ * 存储页面缓存
+ * @param type $key
+ * @param type $lifetime
+ */
+function store($key, $lifetime = 3600){
+    @ob_start();
+    register_shutdown_function(function($key, $lifetime){
+        $content = ob_get_contents();
+        ob_end_flush();
+        if (strlen($content)){
+            cache($key, $content, $lifetime);
+        }
+    }, $key, $lifetime);
 }
 
 /**

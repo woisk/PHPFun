@@ -1,6 +1,7 @@
 <?php
 
 defined('FUN_CACHE') and define('CACHE_PATH',FUN_CACHE);
+defined('CACHE_PATH') or (is_dir('/dev/shm') && define('CACHE_PATH','/dev/shm/cached/'));
 defined('CACHE_PATH') or define('CACHE_PATH',sys_get_temp_dir() . DIRECTORY_SEPARATOR.'cached'.DIRECTORY_SEPARATOR);
 
 /*
