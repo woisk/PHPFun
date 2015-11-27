@@ -214,12 +214,15 @@ function localip() {
  * @param type $headers
  * @return boolean
  */
-function curl($url, $post = null,$cookies = null,$headers = null) {
+function curl($url, $post = null, $timeout = 120, $cookies = null, $headers = null, $user_agent = null, $referer = null) {
     if (!$url)
         return false;
     $init = curl_init();
     curl_setopt($init, CURLOPT_URL, $url);
     curl_setopt($init, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($init, CURLOPT_CONNECTTIMEOUT , $timeout);
+    curl_setopt($init, CURLOPT_TIMEOUT , $timeout);
+    //curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     //curl_setopt($init, CURLOPT_SSL_VERIFYPEER, 0);
     //curl_setopt($init, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2 (.NET CLR 3.5.30729)");
     //curl_setopt($init, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
@@ -246,6 +249,12 @@ function curl($url, $post = null,$cookies = null,$headers = null) {
             $headers = '';
         if ($headers = array_filter((array)$headers));
             curl_setopt($init, CURLOPT_HTTPHEADER, $headers);
+    }
+    if (is_string($user_agent)){
+        curl_setopt($init, CURLOPT_USERAGENT, $user_agent);
+    }
+    if (is_string($referer)){
+        curl_setopt($init, CURLOPT_REFERER, $referer);
     }
     $result = curl_exec($init);
     if ($error = curl_errno($init))
@@ -524,47 +533,56 @@ function curl_upload($url, $file, $postFields = null, $fieldname = 'file') {
 
 /**
  * file_get_contents改进版
- * @param type $path
- * @param type $timeout
- * @param type $post
+ * @param str $path
+ * @param int $timeout
+ * @param array $post
+ * @param array $headers
  * @return type
  */
-function file_get_contents_v2($path, $timeout = 120, $post = array()) {
-    if (strpos($path, 'http') === 0) {
-        $default_socket_timeout = ini_get('default_socket_timeout');
-        ini_set('default_socket_timeout', $timeout);
-        if (!empty($post)) {
-            $context = stream_context_create(array(
-                'http' => array(
-                    'timeout' => $timeout,
-                    'method' => 'POST',
-                    'content' => http_build_query($post, '', '&')
-                )
-            ));
-        } else {
-            $context = stream_context_create(array(
-                'http' => array(
-                    'method' => "GET",
-                    'timeout' => $timeout,
-                )
-            ));
-        }
-        /*$filesize = online_filesize($path);
-        $content = file_get_contents($path, false, $context);
-        if (!$content || (strlen($content) != $filesize)) {
-            $content = file_get_contents($path, false, $context);
-            if (!$content || (strlen($content) != $filesize)) {
-                $content = false;
-            }
-        }*/
-        $content = file_get_contents($path, false, $context);
-        if (!$content) {
-            $content = file_get_contents($path, false, $context);
-        }
-        ini_set('default_socket_timeout', $default_socket_timeout);
-    } else {
-        $content = file_get_contents($path);
+function file_get_contents_v2($path, $timeout = 120, $post = null, $headers = null, $user_agent = null, $referer = null) {
+    if (is_file($path) || is_link($path) || is_dir($path)){
+        return $content = file_get_contents($path);;
     }
+    
+    $default_socket_timeout = ini_get('default_socket_timeout');
+    ini_set('default_socket_timeout', $timeout);
+    $options = array(
+        'http' => array(
+            'method' => "GET",
+            'timeout' => $timeout,
+        )
+    );
+    if ($post) {
+        if (is_array($post))
+            $post = http_build_query($post, '', '&');
+        $options['method'] = 'POST';
+        $options['content'] = $post;
+    }
+    if (is_string($referer)) {
+        $headers['Referer'] = $referer;
+    }
+    if ($headers) {
+        $headers = (array)$headers;
+        $options['header'] = '';
+        foreach ($headers as $field=>$value){
+            if (is_string($field)){
+                $header = "{$field}: {$value}\r\n";
+            }else{
+                $header = "{$value}\r\n";
+            }
+            $options['header'] .= $header;
+        }
+    }
+    if (is_string($user_agent)) {
+        $options['user_agent'] = $user_agent;
+    }
+    $context = stream_context_create($options);
+    $content = file_get_contents($path, false, $context);
+    if (!$content) {
+        $content = file_get_contents($path, false, $context);
+    }
+    ini_set('default_socket_timeout', $default_socket_timeout);
+    
     return $content;
 }
 
