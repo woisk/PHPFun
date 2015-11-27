@@ -75,7 +75,7 @@ function ut_end($tag = null,$render = UT_RENDER){
             'Unit Test'=>'<span style="color:red">'.$tag.date(' Y-m-d H:i:s').'</span>',
             'Trace'=>$trace,
             'Cost Memory'=>'<span style="color:red">'.($result['costMemory']/1000).' KB</span>',
-            'Cost Time'=>'<span style="color:red">'.$result['costTime'].' Second</span>',
+            'Cost Time'=>'<span style="color:red">'.sprintf('%.10f',$result['costTime']).' Second</span>',
             'Content Length'=>'<span style="color:red">'.$result['contentLenght'].' Bytes</span>'
 	),'print_r');
 	echo '</div>';
