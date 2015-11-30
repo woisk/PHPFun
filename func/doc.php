@@ -16,9 +16,18 @@ function excel($excel,array $data = null, $writerType = 'Excel2007'){
         $c = 'A';
         foreach ($row as $cell){
             $pCoordinate = "{$c}{$r}";
-            $objPHPExcel->getActiveSheet()->setCellValue($pCoordinate, $cell)
-                //auto width
-                ->getColumnDimension($c)->setAutoSize(true);
+            //set value
+            $objPHPExcel->getActiveSheet()->setCellValue($pCoordinate, $cell);
+            //auto width
+            $objPHPExcel->getActiveSheet()->getColumnDimension($c)->setAutoSize(true);
+            //left align
+            $objPHPExcel->getActiveSheet()->getStyle($pCoordinate)->applyFromArray(
+                array(
+                    'alignment' => array(
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                    )
+                )
+            );
             $c++;
         }
         $r++;

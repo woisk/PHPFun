@@ -1,6 +1,14 @@
 <?php
 
 /**
+ * 是否微信访问
+ * @return boolean
+ */
+function is_weixin(){
+    return (bool)strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'micromessenger');
+}
+
+/**
  * 是否是json
  */
 if (!function_exists('is_json')){
