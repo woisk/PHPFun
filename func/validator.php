@@ -1,6 +1,32 @@
 <?php
 
 /**
+ * 判断数组是否是另一个数组的其中一段
+ * @param array $needle 子数组
+ * @param array $haystack 父数组
+ * @return boolean
+ */
+function is_intersect(array $needle, array $haystack){
+    $index = array_keys($haystack, current($needle));
+    if (!$index){
+        return false;
+    }
+    foreach ($index as $i){
+        while ($v = next($needle)){
+            if ($v != $haystack[++$i]){
+                break;
+            }
+        }
+        if (!$v){
+            return true;
+        }
+        reset($needle);
+    }
+    
+    return true;
+}
+
+/**
  * 是否微信访问
  * @return boolean
  */

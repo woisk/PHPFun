@@ -181,7 +181,8 @@ function dsubstr($string, $length, $start = 0, $suffix = '', $charset = 'UTF-8')
  * @return type
  */
 function unicodeencode($s) {
-	$s = iconv ( 'UTF-8', 'UCS-2', $s );
+	$ss = @iconv ( 'UTF-8', 'UCS-2', $s );
+    $s = $ss ? $ss : $s;
 	$len = strlen ( $s );
 	$str = '';
 	for($i = 0; $i < $len - 1; $i = $i + 2) {
