@@ -108,7 +108,10 @@ function clear($filename){
  * @param type $dir
  * @return boolean
  */
-function tmp($prefix = 'tmp', $dir = '/tmp') {
+function tmp($prefix = 'tmp', $dir = null) {
+    if (!is_dir($dir)){
+        $dir = sys_get_temp_dir();
+    }
     $filename = tempnam($dir, $prefix);
     if (!$filename)
         return error('cannot create template file');

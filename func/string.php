@@ -1,6 +1,62 @@
 <?php
 
 /**
+ * 去除一般存储无法识别的字符串，留下可以识别的
+ * @param type $str
+ */
+function remove_unrecognized($str){
+    $blacklist = array();
+    
+    $tmp = array();
+    for ($i = 0x83;$i<0xbe;$i++){
+        $tmp[] = chr(0xf0).chr(0x9f).chr(0x94).chr($i);
+    }
+    
+    $blacklist = array_merge($blacklist, $tmp);
+    
+    return str_replace($blacklist, '', $str);
+}
+
+/**
+ * 找出两个字符串的交集
+ * @param type $string1 字符串一
+ * @param type $string2 字符串二
+ * @return type
+ */
+function str_intersect($string1, $string2){
+    $array1 = array();
+    for ($i=0;$i<strlen($string1);$i++){
+        $array1[] = substr($string1,$i,1);
+    }
+    $array2 = array();
+    for ($i=0;$i<strlen($string2);$i++){
+        $array2[] = substr($string2,$i,1);
+    }
+    
+    $intersect = array();
+    $start = 0;
+    do{
+        $len = 1;
+        do{
+            $tmp = array_slice($array1, $start, $len);
+            if (!is_intersect($tmp,$array2)){
+                break;
+            }
+            $len++;
+        }while($start + $len <= count($array1));
+        $intersect = array_merge($intersect,$tmp);
+        $start += $len;
+
+    }while($start < count($array1));
+    
+    $str_intersect = '';
+    for ($i=0;$i<count($intersect);$i++){
+        $str_intersect .= $intersect[$i];
+    }
+    return $str_intersect;
+}
+
+/**
  * 获取字符串长度
  * @param type $str
  * @return int
