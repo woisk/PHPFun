@@ -1,6 +1,33 @@
 <?php
 
 /**
+ * 记录日志
+ * @param type $text 日志内容
+ * @param type $pre 日志文件名前缀
+ * @param type $by_date 是否按日期存日志
+ */
+function writelog($text,$pre = 'PHPFun',$dir = null, $by_date = true){
+    if (!is_dir($dir)){
+        $dir = sys_get_temp_dir();
+    }
+    if ($by_date){
+        $logfile = "{$pre}_logfile".date('_Y-m-d');
+    }else{
+        $logfile = "{$pre}_logfile";
+    }
+    $logfile = "{$dir}/{$logfile}.log";
+    
+    $text = date('Y-m-d H:i:s')." [Log from file]: {$_SERVER['SCRIPT_FILENAME']} [Log content]: {$text}";
+    
+    if (!$fp = fopen($logfile, 'a+b')){
+        return false;
+    }
+    fwrite($fp, $text . "\r\n");
+    fclose($fp);
+    return true;
+}
+
+/**
  * 载入php扩展
  * @param string $ext
  * @param string $or_ext

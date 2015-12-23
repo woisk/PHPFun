@@ -84,9 +84,9 @@ function writeline($filename,$string) {
     if (empty($string))
         return error('input string is empty');
     $file = fopen($filename, 'a+b');
-    fwrite($file, $string . "\r\n");
+    $length = fwrite($file, $string . "\r\n");
     fclose($file);
-    return true;
+    return $length;
 }
 
 /**
