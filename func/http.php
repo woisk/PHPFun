@@ -24,7 +24,9 @@ function im_mobile() {
         "240x320","480x640","acer","android","anywhereyougo.com","asus","audio","blackberry",
         "blazer","coolpad" ,"dopod", "etouch", "hitachi","htc","huawei", "jbrowser", "lenovo",
         "lg","lg-","lge-","lge", "mobi","moto","nokia","phone","samsung","sony",
-        "symbian","tablet","tianyu","wap","xda","xde","zte"
+        "symbian","tablet","tianyu","wap","xda","xde","zte",
+        "ericsson","mot","sgh","sharp","sie-","philips","panasonic","alcatel","meizu","netfront",
+        "ucweb","windowsce","palm","operamini","operamobi","openwave","nexusone","cldc","midp","mobile",
     );
     $is_mobile = false;
     foreach ($mobile_browser as $device) {
