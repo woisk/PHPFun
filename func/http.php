@@ -302,15 +302,57 @@ function curl($url, $post = null, $timeout = 120, $cookies = null, $headers = nu
 }
 
 /**
- * CURL
- * @param array $urls
- * @return boolean
+ * CURL多并发
+ * @param array $urls 要请求的url地址数组
+ * @param array $options curl请求选项
+ * @example 
+ * array(
+        //post数据
+        'post'=>array(
+            'name'=>'abc',
+            'get'=>true
+        ),
+        //超时时间，秒
+        'timeout'=>120,
+        //cookie数据
+        'cookies'=>'asos=userCountryIso=CN&topcatid=1000&currencyid=2&currencylabel=USD',
+        //header数据
+        '$headers'=>array(
+            'X-FORWARDED-FOR'=>'127.0.0.1',
+            'CLIENT-IP'=>'127.0.0.1'
+        ),
+        //useragent信息
+        'user_agent'=>'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0',
+        //请求来源信息
+        'referer'=>'http://127.0.0.1/',
+        CURLOPT_FOLLOWLOCATION=>0
+    );
+ * @example2
+ * array(
+        array(
+            'post'=>'asos=userCountryIso=CN&topcatid=1000&currencyid=2&currencylabel=USD',
+            'timeout'=>5,
+        ),
+        array(
+            CURLOPT_TIMEOUT=>5,
+            CURLOPT_TIMEOUT=>30,
+            'cookies'=>'asos=userCountryIso=CN&topcatid=1000&currencyid=2&currencylabel=USD',
+            'headers'=>'X-FORWARDED-FOR:127.0.0.1',
+        ),
+        array(
+            CURLOPT_HEADER=>1,
+            'user_agent'=>'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0',
+            'referer'=>'http://127.0.0.1/'
+        )
+    );
+ * 
+ * @return array
  */
-function curl_multi(array $urls) {
+function curl_multi(array $urls, array $options = null) {
     if (empty($urls))
         return false;
     $init = curl_multi_init();
-    $options = array(
+    $default_option = array(
         //启用时会将头文件的信息作为数据流输出
         CURLOPT_HEADER => 0,
         //文件流形式
@@ -318,25 +360,105 @@ function curl_multi(array $urls) {
         //设置curl允许执行的最长秒数   
         CURLOPT_TIMEOUT => 5,
         CURLOPT_CONNECTTIMEOUT => 5,
+        //SSL安全验证
+        CURLOPT_SSL_VERIFYHOST => 0,
+        CURLOPT_SSL_VERIFYPEER => 0,
+        //自动跳转
+        CURLOPT_FOLLOWLOCATION => 1
     );
-    $conn = array();
     
-    foreach ($urls as $k => $url) {
-        $conn[$k] = curl_init($url);
-        curl_setopt_array($conn[$k], $options);
-        curl_multi_add_handle($init, $conn[$k]);
+    $options = (array)$options;
+    if (array_keys($options) !== range(0,count($options)-1)){
+        $options = array_fill(0,count($urls),$options);
     }
+    
+    foreach ($options as $i=>$option){
+        
+        if (isset($option['timeout'])) {
+            $timeout = $option['timeout'];
+            if ($timeout){
+                $option[CURLOPT_TIMEOUT] = $timeout;
+                $option[CURLOPT_CONNECTTIMEOUT] = $timeout;
+            }
+            unset($option['timeout']);
+        }
+        if (isset($option['post'])) {
+            $post = $option['post'];
+            if ($post){
+                $option[CURLOPT_POST] = true;
+                if (is_array($post) || is_string($post))
+                    $option[CURLOPT_POSTFIELDS] = $post;
+            }
+            unset($option['post']);
+        }
+        if (isset($option['cookies'])) {
+            $cookies = $option['cookies'];
+            if ($cookies){
+                if (is_array($cookies))
+                    $cookies = http_build_cookie($cookies);
+                if (is_string($cookies) && strlen($cookies))
+                    $option[CURLOPT_COOKIE] = $cookies;
+            }
+            unset($option['cookies']);
+        }
+        if (isset($option['headers'])) {
+            $headers = $option['headers'];
+            if ($headers){
+                if (is_array($headers)){
+                    foreach ($headers as $k => $v){
+                        if (is_string($k) && strlen($k)){
+                            $headers[$k] = $k .': '. $v;
+                        }elseif(!strpos(':',$v))
+                            $headers[$k] = '';
+                    }
+                }elseif(!strpos(':',$headers))
+                    $headers = '';
+                if ($headers = array_filter((array)$headers));
+                    $option[CURLOPT_HTTPHEADER] = $headers;
+            }
+            unset($option['headers']);
+        }
+        if (isset($option['user_agent'])) {
+            $user_agent = $option['user_agent'];
+            if (is_string($user_agent)){
+                $option[CURLOPT_USERAGENT] = $user_agent;
+            }
+            unset($option['user_agent']);
+        }
+        if (isset($option['referer'])) {
+            $referer = $option['referer'];
+            if (is_string($referer)){
+                $option[CURLOPT_REFERER] = $referer;
+            }
+            unset($option['referer']);
+        }
+        
+        $options[$i] = $option;
+    }
+    
+    $conn = array();
+    foreach ($urls as $k => $url) {
+        $ch = curl_init($url);
+        $option = !empty($options[$k]) ? ($options[$k] + $default_option) : $default_option;
+        curl_setopt_array($ch, $option);
+        curl_multi_add_handle($init, $ch);
+        $conn[$k] = $ch;
+    }
+    
     do{
         do {
             $mrc = curl_multi_exec($init, $running);
+            usleep(10000);
         } while (($mrc == CURLM_CALL_MULTI_PERFORM) || (curl_multi_select($init) != -1));
     }while ($running and $mrc == CURLM_OK);
     
     $ret = array();
     foreach ($urls as $k => $url) {
-        $error = curl_error($conn[$k]);
-        $ret[$k] = $error ? $error : curl_multi_getcontent($conn[$k]);
-        curl_close($conn[$k]);
+        $ch = $conn[$k];
+        $error = curl_error($ch);
+        $ret[$k] = $error ? false : curl_multi_getcontent($ch);
+        curl_multi_remove_handle($init, $ch);
+        curl_close($ch);
     }
     return  $ret;
 }
