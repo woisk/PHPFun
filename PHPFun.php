@@ -26,8 +26,8 @@ class PHPFun{
     
     protected static $_instance;
     
-    public function __construct($namespace = null) {
-        $this->init($namespace);
+    public function __construct() {
+        $this->init(func_get_args());
         self::$_instance = $this;
     }
     
@@ -41,14 +41,16 @@ class PHPFun{
         return req_once($namespace);
     }
     
-    private function init($namespace = null){
+    private function init(array $namespaces = array()){
         require_once FUN_ROOT.'init.php';
         
-        if (empty($namespace)){
+        if (empty($namespaces)){
             $libs = glob(FUN_FUNC.'*.php');
             array_walk($libs,'req_once');
         }else{
-            $this->load($namespace);
+            foreach ($namespaces as $namespace){
+                $this->load($namespace);
+            }
         }
         
         spl_autoload_register(array($this,'lib_autoload'));
