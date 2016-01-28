@@ -20,17 +20,122 @@ function ut_start($tag = null,$render = UT_RENDER){
     global $_runtime;
     ob_start();
     if ($tag === null)
-        $tag = '#'.(count($_runtime)+1);
+        $tag = 'tag#'.(count($_runtime)+1);
     if (isset($_runtime[$tag]))
         return error('tag <'.$tag.'> exists');
     
     $info = array(
         'render'=>(UT_NORENDER === $render)?$render:UT_RENDER,
         'startMemory'=>memory_get_usage(),
-        'startTime'=>microtime(true)
+        'startTime'=>microtime(true),
+        'step'=>0,
+        'breakpoint'=>0
     );
     $_runtime[$tag] = $info;
     return $_runtime;
+}
+
+/**
+ * 步进，输出每一步之间对比的单元测试数据
+ * @global array $_runtime
+ * @param type $tag
+ * @param type $render
+ * @return type
+ */
+function ut_step($tag = null,$render = UT_RENDER){
+    global $_runtime;
+    if (empty($_runtime))
+        return error('there is no any unittest initialize');
+    if ($tag === null){
+        $keys = array_keys($_runtime);
+        $tag = current($keys);
+    }elseif (!isset($_runtime[$tag]))
+        return error('unittest tag <'.$tag.'> not exists');
+    
+    $info = &$_runtime[$tag];
+    
+    $memory = memory_get_usage();
+    $time = microtime(true);
+    if (!isset($info['stepMemory'])){
+        $stepMemory = $memory - $info['startMemory'];
+    }else{
+        $stepMemory = $memory - $info['stepMemory'];
+    }
+    if (!isset($info['stepTime'])){
+        $stepTime = $time - $info['startTime'];
+    }else{
+        $stepTime = $time - $info['stepTime'];
+    }
+    $info['stepMemory'] = $memory;
+    $info['stepTime'] = $time;
+    unset($memory,$time);
+    $step = 'step#'.(string)++$info['step'];
+
+    $bt=debug_backtrace();
+    $trace = array();
+    foreach($bt as $k=>$v){
+        @$trace[] = "#$k {$v['class']}{$v['type']}{$v['function']}() called at [{$v['file']}:{$v['line']}]";
+    }
+
+    if ($info['render'] === UT_RENDER){
+        ob_start();
+        echo '<p><div style="text-align:left">';
+        pre(array(
+                'Unit Test'=>'<span style="color:red">'.$tag.date(' Y-m-d H:i:s').'</span>',
+                'Step'=>'<span style="color:red">'.$step.'</span>',
+                'Trace'=>$trace,
+                'Cost Memory'=>'<span style="color:red">'.sprintf('%0.f',$stepMemory/1000).' KB</span>',
+                'Cost Time'=>'<span style="color:red">'.sprintf('%0.6f',$stepTime).' Second</span>'
+        ),'print_r');
+        echo '</div></p>';
+        ob_end_flush();
+    }
+    return array('memory'=>$stepMemory,'time'=>$stepTime);
+}
+
+/**
+ * 断点，每次输出断点处的单元测试数据
+ * @global array $_runtime
+ * @param type $tag
+ * @param type $render
+ * @return type
+ */
+function ut_breakpoint($tag = null,$render = UT_RENDER){
+    global $_runtime;
+    if (empty($_runtime))
+        return error('there is no any unittest initialize');
+    if ($tag === null){
+        $keys = array_keys($_runtime);
+        $tag = current($keys);
+    }elseif (!isset($_runtime[$tag]))
+        return error('unittest tag <'.$tag.'> not exists');
+    
+    $info = &$_runtime[$tag];
+    
+    $pointMemory = memory_get_usage() - $info['startMemory'];
+    $pointTime = microtime(true) - $info['startTime'];
+    $breakpoint = 'breakpoint#'.(string)++$info['breakpoint'];
+
+    $bt=debug_backtrace();
+    $trace = array();
+    foreach($bt as $k=>$v){
+        @$trace[] = "#$k {$v['class']}{$v['type']}{$v['function']}() called at [{$v['file']}:{$v['line']}]";
+    }
+
+    if ($info['render'] === UT_RENDER){            
+        ob_start();
+        echo '<p><div style="text-align:left">';
+        pre(array(
+                'Unit Test'=>'<span style="color:red">'.$tag.date(' Y-m-d H:i:s').'</span>',
+                'Breakpoint'=>'<span style="color:red">'.$breakpoint.'</span>',
+                'Trace'=>$trace,
+                'Cost Memory'=>'<span style="color:red">'.sprintf('%0.f',$pointMemory/1000).' KB</span>',
+                'Cost Time'=>'<span style="color:red">'.sprintf('%0.6f',$pointTime).' Second</span>'
+        ),'print_r');
+        echo '</div></p>';
+        ob_end_flush();
+    }
+    return array('memory'=>$pointMemory,'time'=>$pointTime);
 }
 
 /**
@@ -55,11 +160,11 @@ function ut_end($tag = null,$render = UT_RENDER){
     }elseif (!isset($_runtime[$tag]))
         return error('unittest tag <'.$tag.'> not exists');
     
-    $result = &$_runtime[$tag];
+    $info = &$_runtime[$tag];
     if (UT_NORENDER === $render)
-        $result['render'] = $render;
-    list($result['endMemory'],$result['endTime'],$result['costMemory'],$result['costTime'],$result['contentLenght'])
-            = array($endMemory,$endTime,$endMemory - $result['startMemory'],$endTime - $result['startTime'],strlen($content) - $unittest_string_length);
+        $info['render'] = $render;
+    list($info['endMemory'],$info['endTime'],$info['costMemory'],$info['costTime'],$info['contentLenght'])
+            = array($endMemory,$endTime,$endMemory - $info['startMemory'],$endTime - $info['startTime'],strlen($content) - $unittest_string_length);
     
     $bt = debug_backtrace();
     $trace = array();
@@ -68,17 +173,18 @@ function ut_end($tag = null,$render = UT_RENDER){
                 = array(got($v,'class'),got($v,'type'),got($v,'function'),got($v,'file'),got($v,'line'));
         $trace[] = "#$k {$class}{$type}{$function}() called at [{$file}:{$line}]";
     }
-    if ($result['render'] === UT_RENDER){
+    if ($info['render'] === UT_RENDER){
         ob_start();
-	echo '<div style="text-align:left">';
-	pre(array(
-            'Unit Test'=>'<span style="color:red">'.$tag.date(' Y-m-d H:i:s').'</span>',
-            'Trace'=>$trace,
-            'Cost Memory'=>'<span style="color:red">'.($result['costMemory']/1000).' KB</span>',
-            'Cost Time'=>'<span style="color:red">'.sprintf('%.10f',$result['costTime']).' Second</span>',
-            'Content Length'=>'<span style="color:red">'.$result['contentLenght'].' Bytes</span>'
-	),'print_r');
-	echo '</div>';
+        echo '<p><div style="text-align:left">';
+        pre(array(
+                'Unit Test'=>'<span style="color:red">'.$tag.date(' Y-m-d H:i:s').'</span>',
+                'End'=>'<span style="color:red">'.date('Y-m-d H:i:s').'</span>',
+                'Trace'=>$trace,
+                'Cost Memory'=>'<span style="color:red">'.($info['costMemory']/1000).' KB</span>',
+                'Cost Time'=>'<span style="color:red">'.sprintf('%.10f',$info['costTime']).' Second</span>',
+                'Content Length'=>'<span style="color:red">'.$info['contentLenght'].' Bytes</span>'
+        ),'print_r');
+        echo '</div></p>';
         $unittest_string_length += strlen(ob_get_contents());
         ob_end_flush();
     }

@@ -460,6 +460,7 @@ function curl_multi(array $urls, array $options = null) {
         curl_multi_remove_handle($init, $ch);
         curl_close($ch);
     }
+	curl_multi_close($init);
     return  $ret;
 }
 
