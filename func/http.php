@@ -104,10 +104,12 @@ function redirect($url, $time=0, $msg='') {
  * @return type
  */
 function domain($uri = '',$pre = 'http'){
-    if (isset($_SERVER['SERVER_NAME']))
-        $domain = $_SERVER['SERVER_NAME'];
-    elseif (isset($_SERVER['HTTP_HOST']))
+    if (isset($_SERVER['HTTP_HOST']))
         $domain = $_SERVER['HTTP_HOST'];
+    elseif (isset($_SERVER['SERVER_NAME']))
+        $domain = $_SERVER['SERVER_NAME'];
+    elseif (isset($_SERVER['SERVER_ADDR']))
+        $domain = $_SERVER['SERVER_ADDR'];
     else
         $domain = '';
     

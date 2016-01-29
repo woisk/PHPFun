@@ -10,6 +10,9 @@ function writelog($text,$pre = 'PHPFun',$dir = null, $by_date = true){
     if (!is_dir($dir)){
         $dir = sys_get_temp_dir();
     }
+    if (is_writable($dir)){
+        return false;
+    }
     if ($by_date){
         $logfile = "{$pre}_logfile".date('_Y-m-d');
     }else{
