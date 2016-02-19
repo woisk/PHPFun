@@ -247,6 +247,19 @@ function localip() {
 }
 
 /**
+ * 组装cookie数组为字符串
+ */
+if (!function_exists('http_build_cookie')){
+    function http_build_cookie(array $cookie){
+        $cookie_str = '';
+        foreach ($cookie as $name=>$value){
+            $cookie_str .= "{$name}=$value; ";
+        }
+        return trim($cookie_str,'; ');
+    }
+}
+
+/**
  * CURL
  * @param type $url
  * @param type $post
