@@ -1,14 +1,13 @@
 <?php
+
 /*$customer = ORM::factory($customerTable);
-	$customer->timestamp(array(
-		'addTime','lastEditTime'
-	));
-	
-	//V
-	$values = array(
-		'name'=>1,
-		'area'=>2,
-		'from'=>3
+$customer->timestamp(array(
+    'addTime','lastEditTime'
+));
+$values = array(
+    'name'=>1,
+    'area'=>2,
+    'from'=>3
 );
 $customer->left_join('log','l')->on('l.customerId','id')->on('df','sdf');
 $customer->right_join('log','l')->on('l.customerId','id')->on('df','sdf');
@@ -26,7 +25,7 @@ echo $customer->sql();
 var_dump($customer->get_pack());
 exit;*/
 
-class MYSQL{
+class ORMMYSQL{
 	
 	private $error;
 	
@@ -34,7 +33,7 @@ class MYSQL{
 	
 	private $alias = '`t1`';
     
-    private $pre = '';
+    private static $pre = '';
 	
 	private $id;
 	
@@ -74,9 +73,9 @@ class MYSQL{
 	
 	public static function table_prefix($pre = null){
         if ($pre){
-            $this->pre = $pre;
+            self::$pre = $pre;
         }
-        return $this->pre;
+        return self::$pre;
 	}
         
     public static function last_sql(){
@@ -87,7 +86,7 @@ class MYSQL{
 		
 		$_instance = new self;
                 
-                if (0 < preg_match('/^\d+$/',$extra)){
+        if (0 < preg_match('/^\d+$/',$extra)){
 			$_instance->id = $extra;
 		}elseif(is_string($extra)){
 			$_instance->alias = '`'.$extra.'`';
@@ -139,12 +138,14 @@ class MYSQL{
 			return $this->error('字段数组为空');
 		}
 		foreach ($values as $field=>$value){
-                        if ($addslashes)
-                            $value = addslashes($value);
-                        if (($value == 'null') || preg_match('/\+[ ]*\d+$/i',$value))
-                            $this->values['`'.$field.'`'] = $value;
-                        else
-                            $this->values['`'.$field.'`'] = "'".$value."'";
+            if ($addslashes){
+                $value = addslashes($value);
+            }
+            if (($value == 'null') || preg_match('/\+[ ]*\d+$/i',$value)){
+                $this->values['`'.$field.'`'] = $value;
+            }else{
+                $this->values['`'.$field.'`'] = "'".$value."'";
+            }
 		}
 		return $this;
 	}
@@ -180,10 +181,11 @@ class MYSQL{
 			}
 			$value = "('".$value."')";
 		}else{
-                        if ($value === null)
-                            $value = "null";
-                        else
-                            $value = "'".(string)$value."'";
+            if ($value === null){
+                $value = "null";
+            }else{
+                $value = "'".(string)$value."'";
+            }
 		}
 		
 		if (empty($this->wheres) || (true === $this->where_open)){
@@ -250,15 +252,15 @@ class MYSQL{
 		if (0 < func_num_args()){
 			$selectFields = func_get_args();
 			foreach ($selectFields as &$selectField){
-                                if ('*' == $selectField){
+                if ('*' == $selectField){
 					$selectField = $this->alias.'.*';
 					continue;
 				}
 				if (is_array($selectField)){
-                                        if (isset($selectField[1])){
-                                            $field_alias = $selectField[1];
-                                        }
-                                        $selectField = $selectField[0];
+                    if (isset($selectField[1])){
+                        $field_alias = $selectField[1];
+                    }
+                    $selectField = $selectField[0];
 				}
 				
 				if (0 < preg_match('/^[\w\.]+$/',$selectField)){
@@ -271,9 +273,9 @@ class MYSQL{
 					}
 					$selectField = $alias.'.'.'`'.$field.'`';
 				}
-                                if (isset($field_alias)){
-                                    $selectField .= ' as `'.$field_alias.'`';
-                                }
+                if (isset($field_alias)){
+                    $selectField .= ' as `'.$field_alias.'`';
+                }
 			}
 			$selectSQL = implode(',',$selectFields);
 		}else{
@@ -585,12 +587,13 @@ class MYSQL{
 			case 'insert':
 				//$insertSQL = "(`sdf`,`dd`) values('df','234')";
 				$insertSQL = $param['insertSQL'];
-                                if ($extra1 == 'ignore')
-                                    $DML = 'insert ignore into `'.$this->model.'` '.$insertSQL;
-                                elseif(($extra1 == 'duplicate') && $extra2){
-                                    $DML = 'insert into `'.$this->model.'` '.$insertSQL.' ON DUPLICATE KEY UPDATE '.$extra2;
-                                }else
-                                    $DML = 'insert into `'.$this->model.'` '.$insertSQL;
+                if ($extra1 == 'ignore'){
+                    $DML = 'insert ignore into `'.$this->model.'` '.$insertSQL;
+                }elseif(($extra1 == 'duplicate') && $extra2){
+                    $DML = 'insert into `'.$this->model.'` '.$insertSQL.' ON DUPLICATE KEY UPDATE '.$extra2;
+                }else{
+                    $DML = 'insert into `'.$this->model.'` '.$insertSQL;
+                }
 				break;
 			default:
 				$DML = '';
@@ -599,7 +602,7 @@ class MYSQL{
 		$this->sql = $DML;
 	}
 	
-	//->pack(':pack1:')
+	//->set_pack(':pack1:')
 	public function set_pack($packTag = null){
 		if (null === $packTag){
 			return $this->error('未提供子句标记');
@@ -626,7 +629,7 @@ class MYSQL{
 		return $this->sql_packs;
 	}
 	
-	//->pack(':pack2:')->union(':pack1:',':pack2:');
+	//->set_pack(':pack2:')->union(':pack1:',':pack2:');
 	public function union($packTag1,$packTag2 = null,$type = 'union'){
 		if (is_string($packTag1) && isset($this->sql_packs[$packTag1])){
 			$this->clear();
@@ -651,7 +654,7 @@ class MYSQL{
 			$this->error('SQL语句为空');
 			return false;
 		}
-                self::$last_sql = $this->sql;
+        self::$last_sql = $this->sql;
 		return $this->sql;
 	}
 	

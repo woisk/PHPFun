@@ -179,3 +179,62 @@ function phpinput(
     
     return $ret; 
 }
+
+/**
+ * 创建udp服务器
+ * @param type $ip
+ * @param type $port
+ * @param Closure $callback
+ */
+function udp_server($ip,$port,Closure $callback){
+    //服务器信息
+    $server = "udp://{$ip}:{$port}";
+    //消息结束符号
+    $msg_eof = "\n\r\n\r";
+    $socket = stream_socket_server($server, $errno, $errstr, STREAM_SERVER_BIND);
+    if (!$socket) {
+        die("$errstr ($errno)");
+    }
+
+    $data = '';
+    do {
+        //接收客户端发来的信息
+        $inMsg = stream_socket_recvfrom($socket, 1024, 0, $peer);
+        //服务端打印出相关信息
+        echo "Client : $peer\n";
+        echo "Receive : {$inMsg}";
+        //给客户端发送信息
+        //$outMsg = substr($inMsg, 0, (strrpos($inMsg, $msg_eof))).' -- '.date("D M j H:i:s Y\r\n");
+        
+        $data .= $inMsg;
+        if ($eof_pos = strrpos($data, $msg_eof)){
+            //执行回调
+            $outMsg = $callback(substr($data, 0, $eof_pos));
+            //删除上一批数据
+            $data = substr($data, $eof_pos+strlen($msg_eof));
+            //给客户端发送信息
+            stream_socket_sendto($socket, $outMsg, 0, $peer);
+        }
+    } while ($inMsg !== false);
+}
+
+/**
+ * 发送udp请求
+ * @param type $ip ip地址
+ * @param type $port 端口
+ * @param type $data 发送的数据
+ * @return string
+ */
+function udp($ip, $port, $data = ''){
+    $handle = stream_socket_client("udp://{$ip}:{$port}", $errno, $errstr);
+    if( !$handle ){
+        die("ERROR: {$errno} - {$errstr}\n");
+    }
+    //消息结束符号
+    $msg_eof = "\n\r\n\r";
+    fwrite($handle, $data.$msg_eof);
+    $result = '';
+    while ($line = fgets($handle)) $ret .= $line;
+    fclose($handle);
+    return $result;
+}

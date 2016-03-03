@@ -166,7 +166,16 @@ function is_cmd(){
 
 /**
  * 添加非守护进程
- * @return type
+ * @return int
+ * @example 
+ * 
+    $a = 890;
+    $pid = fork(function() use ($a){
+        echo $a;
+        sleep(1);
+    },function(){
+        echo 456;
+    });
  */
 function fork(){
     $child_threads = func_get_args();
@@ -180,7 +189,16 @@ function fork(){
 
 /**
  * 添加守护进程
- * @return type
+ * @return int
+ * @example 
+ * 
+    $a = 890;
+    $pid = daemon(function() use ($a){
+        echo $a;
+        sleep(1);
+    },function(){
+        echo 456;
+    });
  */
 function daemon(){
     $child_threads = func_get_args();

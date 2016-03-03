@@ -43,6 +43,24 @@ class Thread{
     private $monitor = array();
 
     /**
+     * pid文件路径
+     * @var type 
+     */
+    private $pidfile;
+    
+    /**
+     * 主线程监控子线程间隔，秒
+     * @var type 
+     */
+    private $interval = 1;
+    
+    public function __construct() {
+        if (!function_exists('pcntl_fork')){
+            throw new Exception('Enable pnctl first');
+        }
+    }
+    
+    /**
      * 返回所有子进程pid
      * @return array
      */
@@ -125,6 +143,9 @@ class Thread{
      * 开始运行
      */
     public function run(){
+        $this->pidfile = tempnam(sys_get_temp_dir(),__CLASS__);
+        file_put_contents(posix_getpid(), $this->pidfile);
+        
         foreach ($this->fork as $child_thread){
             $this->fork($child_thread,true);
         }
@@ -164,11 +185,12 @@ class Thread{
      */
     private function monitor(){        
         do{
-            usleep(500000);
+            sleep($this->interval);
             //立刻返回子进程状态，-1表示检查所有子进程
             $pid = pcntl_waitpid(-1,$status ,WNOHANG || WUNTRACED);
             //调用等待信号的处理器 
             pcntl_signal_dispatch();
+            touch($this->pidfile);
         }while(($pid <= 0) || !isset($this->monitor[$pid]));
         
         if (!empty($this->monitor[$pid])){
