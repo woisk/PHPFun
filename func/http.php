@@ -271,6 +271,8 @@ function curl($url, $post = null, $timeout = 120, $cookies = null, $headers = nu
     if (!$url)
         return false;
     $init = curl_init();
+    //curl_setopt($init, CURLOPT_HEADER, 1);
+    //curl_setopt($init, CURLOPT_NOBODY, 1);
     curl_setopt($init, CURLOPT_URL, $url);
     curl_setopt($init, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($init, CURLOPT_CONNECTTIMEOUT , $timeout);
@@ -312,6 +314,8 @@ function curl($url, $post = null, $timeout = 120, $cookies = null, $headers = nu
     $result = curl_exec($init);
     if ($error = curl_errno($init))
         return false;
+    //$http_code = curl_getinfo($init,CURLINFO_HTTP_CODE);
+    //$header_size = curl_getinfo($init,CURLINFO_HEADER_SIZE);
     curl_close($init);
     return $result;
 }
