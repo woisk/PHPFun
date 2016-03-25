@@ -39,7 +39,7 @@ function delay($url = '/',$timeout = 5,$msg = ''){
     echo "<br />\r\n";
     echo '<span id="delaySecond">'.(int)$timeout.'</span>秒后跳转......';
     echo '<script>var delay='.(int)$timeout.';setInterval(function(){
-        document.getElementById("delaySecond").innerText=--delay;
+        document.getElementById("delaySecond").innerHTML=--delay;
         if (delay<=0) location.href="'.$url.'";
     },1000)</script>';
 }
