@@ -41,6 +41,15 @@ if (!function_exists('is_json')){
 }
 
 /**
+ * 判断字符串是否是md5编码
+ * @param type $s
+ * @return boolean
+ */
+function is_md5($s) {
+    return preg_match("/^[a-z0-9]{32}$/", $s);
+}
+
+/**
  * 判断字符串是否是utf8格式
  * @param type $word
  * @return boolean
