@@ -1,12 +1,18 @@
 <?php
+/**
+ * 文档操作
+ * @author wuxiao
+ */
 
 /**
  * 根据数据生成excel文件
+ * 
+ * excel('test.xlsx',array(array('id','name','createtime'),array(1,'wuxiao','2015-10-9 10:48')));
+ * 
+ * excel('test.xls',array(array('id','name','createtime'),array(1,'wuxiao','2015-10-9 10:48')),'Excel5');
  * @param string $excel
  * @param array $data
  * @param string $writerType 文档类型，Excel2007(后缀xlsx)/Excel5(后缀xls)
- * @example excel('test.xlsx',array(array('id','name','createtime'),array(1,'wuxiao','2015-10-9 10:48')));
- * @example excel('test.xls',array(array('id','name','createtime'),array(1,'wuxiao','2015-10-9 10:48')),'Excel5');
  */
 function excel($excel,array $data = null, $writerType = 'Excel2007'){
     $objPHPExcel = new PHPExcel();
@@ -37,19 +43,19 @@ function excel($excel,array $data = null, $writerType = 'Excel2007'){
     return is_file($excel)?$excel:false;
 }
 
-/* 
- * 
- */
 /**
  * 压缩文件为zip档案
+ * 
+ * zip('压缩包文件名全名',array('要压缩的文件'=>'在压缩包中的新路径'));
+ * 
+ * zip('test.zip',array('jquery-1.11.1.min.js'=>'js/jquery'));
+ * 
+ * zip('test.zip',array('jquery-1.11.1.min.js','jquery-1.8.3.min.js'));
+ * 
+ * zip('test.zip','jquery-1.11.1.min.js');
  * @param string $zip
  * @param array $files
  * @return bool/string
- * @example
- * zip('压缩包文件名全名',array('要压缩的文件'=>'在压缩包中的新路径'));
- * zip('test.zip',array('jquery-1.11.1.min.js'=>'js/jquery'));
- * zip('test.zip',array('jquery-1.11.1.min.js','jquery-1.8.3.min.js'));
- * zip('test.zip','jquery-1.11.1.min.js');
  */
 function zip($zip,$files = null){
     $dir = realpath(dirname($zip));
@@ -103,8 +109,8 @@ function zip($zip,$files = null){
 
 /**
  * 备份文件
- * @param type $filename
- * @param type $cover
+ * @param string $filename
+ * @param boolean $cover
  * @return string
  */
 function backup($filename,$cover = null){
@@ -131,20 +137,26 @@ function backup($filename,$cover = null){
 
 /**
  * 发送邮件
- * @param type $to 发送到
- * @param type $subject 标题
- * @param type $mailbody 内容
- * @param array $smtp_server smtp服务器，格式：array('host'=>'服务器IP','port'=>'服务器端口','username'=>'用户名','password'=>'密码','fromname'=>'自定义发送者名称')
- * @param type $SMTPSecure 是否启用安全模式，ssl/tls
- * @return boolean
  * 
- * @example array(
+ * $smtp_server = array(
+ * 
  *  'host'=>'smtp.163.com',
+ * 
  *  'username'=>'your password account like test@gmail.com',
+ * 
  *  'password'=>'your email password',
+ * 
  *  'port'=>25, //no ssl
+ * 
  *  'fromname'=>'wuxiao'
+ * 
  * )
+ * @param string $to 发送到
+ * @param string $subject 标题
+ * @param string $mailbody 内容
+ * @param array $smtp_server smtp服务器，格式：array('host'=>'服务器IP','port'=>'服务器端口','username'=>'用户名','password'=>'密码','fromname'=>'自定义发送者名称')
+ * @param string $SMTPSecure 是否启用安全模式，ssl/tls
+ * @return boolean
  */
 function email_send($to,$subject,$mailbody,array $smtp_server,$SMTPSecure = '') {
     $mail = new PHPMailer(); //建立邮件发送类

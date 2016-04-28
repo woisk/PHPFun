@@ -1,9 +1,13 @@
 <?php
+/**
+ * 文件操作
+ * @author wuxiao
+ */
 
 /**
  * 格式化文件大小数值 以KB MB GB为单位
- * @param type $size
- * @return type
+ * @param int $size
+ * @return string
  */
 function filesize_format($size) {
 
@@ -28,9 +32,10 @@ function filesize_format($size) {
 
 /**
  * 返回格式化后文件大小的纯数值形式例如返回5.2KB的字节数
- * @param type $val
+ * 
+ * return_bytes('5.2KB') = 5324.8
+ * @param string $val
  * @return int
- * @example return_bytes('5.2KB') = 5324.8
  */
 function return_bytes($val) {
     $val = trim($val);
@@ -45,9 +50,9 @@ function return_bytes($val) {
 
 /**
  * 移动文件
- * @param type $oldname
- * @param type $newname
- * @return type
+ * @param string $oldname
+ * @param string $newname
+ * @return boolean
  */
 function mv($oldname,$newname){
     if (!is_file($oldname))
@@ -59,8 +64,8 @@ function mv($oldname,$newname){
 
 /**
  * 删除文件
- * @param type $filename
- * @return type
+ * @param string $filename
+ * @return boolean
  */
 function del($filename){
     if (!is_file($filename))
@@ -73,8 +78,8 @@ function del($filename){
 
 /**
  * 往文件内容最后添加一行
- * @param type $filename
- * @param type $string
+ * @param string $filename
+ * @param string $string
  * @return boolean
  */
 function writeline($filename,$string) {
@@ -91,7 +96,7 @@ function writeline($filename,$string) {
 
 /**
  * 清空文件内容
- * @param type $filename
+ * @param string $filename
  * @return boolean
  */
 function clear($filename){
@@ -104,8 +109,8 @@ function clear($filename){
 
 /**
  * 创建并返回一个临时文件路径
- * @param type $prefix
- * @param type $dir
+ * @param string $prefix
+ * @param string $dir
  * @return boolean
  */
 function tmp($prefix = 'tmp', $dir = null) {
@@ -122,8 +127,8 @@ function tmp($prefix = 'tmp', $dir = null) {
 
 /**
  * 强制浏览器下载某个文件
- * @param type $filename
- * @return type
+ * @param string $filename
+ * @return null
  */
 function download($filename) {
     if (!is_file($filename))
@@ -144,7 +149,7 @@ function download($filename) {
 
 /**
  * 判断文件是否可读
- * @param type $filename
+ * @param string $filename
  * @return boolean
  */
 function readable($filename) {
@@ -158,7 +163,7 @@ function readable($filename) {
 
 /**
  * 判断文件是否可写
- * @param type $filename
+ * @param string $filename
  * @return boolean
  */
 function writable($filename) {
@@ -172,8 +177,8 @@ function writable($filename) {
 
 /**
  * 获取不带扩展名的文件名
- * @param type $filename
- * @return type
+ * @param string $filename
+ * @return string
  */
 function fileprename($filename){
 	return basename($filename,'.'.pathinfo($filename,PATHINFO_EXTENSION));
@@ -181,8 +186,8 @@ function fileprename($filename){
 
 /**
  * 获取文件扩展名
- * @param type $filename
- * @param type $check
+ * @param string $filename
+ * @param boolean $check
  * @return string
  */
 function fileext($filename,$check = false){
@@ -238,8 +243,8 @@ function fileext($filename,$check = false){
 
 /**
  * 获取文件的mime类型
- * @param type $filename
- * @return boolean
+ * @param string $filename
+ * @return string
  */
 function filemime($filename) {
     if (!is_file($filename))
@@ -256,7 +261,7 @@ function filemime($filename) {
 
 /**
  * 根据mime获取扩展名
- * @param type $mime
+ * @param string $mime
  * @return string
  */
 function mime2ext($mime){

@@ -1,10 +1,12 @@
 <?php
 /**
  * 性能单元测试
- * @package unittest
+ * @author wuxiao
  */
 
+//单元测试结果允许显示
 defined('UT_RENDER') or define('UT_RENDER', 1);
+//单元测试结果禁止显示
 defined('UT_NORENDER') or define('UT_NORENDER', 0);
 $GLOBALS['_runtime'] = array();
 $GLOBALS['unittest_string_length'] = 0;
@@ -12,9 +14,9 @@ $GLOBALS['unittest_string_length'] = 0;
 /**
  * 单元测试开始
  * @global array $_runtime
- * @param string $tag
- * @param type $render
- * @return type
+ * @param string $tag 单元标签
+ * @param enum $render 1：显示，0：不显示
+ * @return array
  */
 function ut_start($tag = null,$render = UT_RENDER){
     global $_runtime;
@@ -38,9 +40,9 @@ function ut_start($tag = null,$render = UT_RENDER){
 /**
  * 步进，输出每一步之间对比的单元测试数据
  * @global array $_runtime
- * @param type $tag
- * @param type $render
- * @return type
+ * @param string $tag 单元标签
+ * @param enum $render 1：显示，0：不显示
+ * @return array
  */
 function ut_step($tag = null,$render = UT_RENDER){
     global $_runtime;
@@ -96,9 +98,9 @@ function ut_step($tag = null,$render = UT_RENDER){
 /**
  * 断点，每次输出断点处的单元测试数据
  * @global array $_runtime
- * @param type $tag
- * @param type $render
- * @return type
+ * @param string $tag 单元标签
+ * @param enum $render 1：显示，0：不显示
+ * @return array
  */
 function ut_breakpoint($tag = null,$render = UT_RENDER){
     global $_runtime;
@@ -142,9 +144,9 @@ function ut_breakpoint($tag = null,$render = UT_RENDER){
  * 单元测试结束
  * @global array $_runtime
  * @global type $startLength
- * @param type $tag
- * @param type $render
- * @return type
+ * @param string $tag 单元标签
+ * @param enum $render 1：显示，0：不显示
+ * @return array
  */
 function ut_end($tag = null,$render = UT_RENDER){
     $endMemory = memory_get_usage();
@@ -195,7 +197,7 @@ function ut_end($tag = null,$render = UT_RENDER){
 
 /**
  * 启动whoops，一个适用于PHP环境的错误捕获与调试的PHP库
- * @param type $pretty 是否展示用户友好界面
+ * @param boolean $pretty 是否展示用户友好界面
  */
 function whoops($pretty = true){
     $whoops = new whoops($pretty);
@@ -203,7 +205,7 @@ function whoops($pretty = true){
 
 /**
  * 返回错误等级/类型对应的PHP常量名
- * @param type $level 错误等级/类型
+ * @param int $level 错误等级/类型
  * @return string
  */
 function E_NAME($level){
@@ -230,8 +232,8 @@ function E_NAME($level){
 
 /**
  * 格式化输出
- * @param type $var 要输出的数据
- * @param type $func 格式化所用的函数，默认使用var_export
+ * @param mixed $var 要输出的数据
+ * @param string $func 格式化所用的函数，默认使用var_export
  */
 function pre($var,$func = 'var_export'){
     echo '<pre style="text-align:left;clear:both;font-size:14px;color:black;">';

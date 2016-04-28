@@ -1,11 +1,15 @@
 <?php
+/**
+ * 安全和防护
+ * @author wuxiao
+ */
 
 /**
  * 来自ucenter的加/解密函数
- * @param type $string
- * @param type $operation
- * @param type $key
- * @param type $expiry
+ * @param string $string
+ * @param enum $operation DECODE|ENCODE
+ * @param string $key
+ * @param int $expiry 过期时间
  * @return string
  */
 function uc_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
@@ -60,7 +64,7 @@ function uc_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
 
 /**
  * 注入预防
- * @param type $value
+ * @param string $value
  * @return boolean
  */
 function DOkillinject(&$value) {
@@ -94,11 +98,12 @@ function DOkillinject(&$value) {
 
 /**
  * 计算密码字符串的强弱度，100分满分
- * @param String $password_str 密码字符串
- * @return float
  * 
  * Returns a float between 0 and 100. The closer the number is to 100 the
+ * 
  * the stronger password is; further from 100 the weaker the password is.
+ * @param string $password_str 密码字符串
+ * @return float
  */
 function password_strength($password_str){
     $h    = 0;

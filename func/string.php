@@ -1,8 +1,12 @@
 <?php
+/**
+ * 字符串操作
+ * @author wuxiao
+ */
 
 /**
  * 去除一般存储无法识别的字符串，留下可以识别的
- * @param type $str
+ * @param string $str
  */
 function remove_unrecognized($str){
     $blacklist = array();
@@ -19,9 +23,9 @@ function remove_unrecognized($str){
 
 /**
  * 找出两个字符串的交集
- * @param type $string1 字符串一
- * @param type $string2 字符串二
- * @return type
+ * @param string $string1 字符串一
+ * @param string $string2 字符串二
+ * @return string
  */
 function str_intersect($string1, $string2){
     $array1 = array();
@@ -58,7 +62,7 @@ function str_intersect($string1, $string2){
 
 /**
  * 获取字符串长度
- * @param type $str
+ * @param string $str
  * @return int
  */
 function length($str) {
@@ -84,9 +88,9 @@ function length($str) {
 
 /**
  * 返回随机字符串，数字/大写字母/小写字母
- * @param type $len
- * @param type $format
- * @return type
+ * @param int $len
+ * @param enum $format ALL|CHAR|NUMBER
+ * @return string
  */
 function random($len = 6, $format = 'ALL') {
 	switch (strtoupper($format)) {
@@ -111,11 +115,11 @@ function random($len = 6, $format = 'ALL') {
 
 /**
  * 截取一定长度的字符串，确保截取后字符串不出乱码
- * @param type $string
- * @param type $length
- * @param type $dot
- * @param type $charset
- * @return type
+ * @param string $string
+ * @param int $length
+ * @param string $dot
+ * @param string $charset
+ * @return string
  */
 function cutstr($string, $length, $dot = ' ...', $charset = 'utf-8') {
 	if(strlen($string) <= $length) {
@@ -182,12 +186,12 @@ function cutstr($string, $length, $dot = ' ...', $charset = 'utf-8') {
 
 /**
  * 来自destoon的字符串截取函数，
- * @param type $string
- * @param type $length
- * @param type $start
- * @param type $suffix
- * @param type $charset
- * @return type
+ * @param string $string
+ * @param int $length
+ * @param int $start
+ * @param string $suffix
+ * @param string $charset
+ * @return string
  */
 function dsubstr($string, $length, $start = 0, $suffix = '', $charset = 'UTF-8') {
 	if($start = intval($start)) {
@@ -233,8 +237,8 @@ function dsubstr($string, $length, $start = 0, $suffix = '', $charset = 'UTF-8')
 
 /**
  * 将内容进行UNICODE编码，编码后的内容格式：YOKA\王 （原始：YOKA王）
- * @param type $s
- * @return type
+ * @param string $s
+ * @return string
  */
 function unicodeencode($s) {
 	$ss = @iconv ( 'UTF-8', 'UCS-2', $s );
@@ -255,8 +259,8 @@ function unicodeencode($s) {
 
 /**
  * unicode解码
- * @param type $str
- * @return type
+ * @param string $str
+ * @return string
  */
 function unicodedecode($str) {
 	preg_match_all ( '/\\\u([[:alnum:]]{4})/', $str, $a );
@@ -281,55 +285,75 @@ function unicodedecode($str) {
 /**
  * xml编码, array => xml
  * @param array $array
- * @param type $main
+ * @param string $main
  * @return string
  */
 function xmlencode(array $array,$main = 'xml'){
     $xml = '<?xml version="1.0"?>'."\r\n";
     $xml .= '<'.$main.'>'."\r\n";
-    function xml_encode($data){
-        $t = '';
-        foreach($data as $key=>$value){
-            if (preg_match('/^[\d]+$|[\W]+/', $key))
-                    return error('[string\xmlencode] invalid element name with value of '.serialize($value));
-            if (is_array($value))
-                $t .= '<'.$key.'>'."\r\n".xml_encode($value).'</'.$key.'>'."\r\n";
-            elseif(is_null($value) || empty($value))
-                $t .= '<'.$key.' />'."\r\n";
-            else
-                $t .= '<'.$key.'>'.$value.'</'.$key.'>'."\r\n";
-        }
-        return $t;
-    };
-    $xml .= (string)xml_encode($array);
+    $xml .= (string)_xmlencode($array);
     $xml .= '</'.$main.'>'."\r\n";
     
     return $xml;
 }
+/**
+ * xmlencode子函数
+ * @param array $data
+ * @return string
+ */
+function _xmlencode($data){
+   $t = '';
+   foreach($data as $key=>$value){
+       if (preg_match('/^[\d]+$|[\W]+/', $key))
+               return error('[string\xmlencode] invalid element name with value of '.serialize($value));
+       if (is_array($value))
+           $t .= '<'.$key.'>'."\r\n"._xmlencode($value).'</'.$key.'>'."\r\n";
+       elseif(is_null($value) || empty($value))
+           $t .= '<'.$key.' />'."\r\n";
+       else
+           $t .= '<'.$key.'>'.$value.'</'.$key.'>'."\r\n";
+   }
+   return $t;
+};
+/*
+ * END xml编码
+ */
 
 /**
  * xml解码, xml => array
- * @param type $str
- * @return type
+ * @param string $str
+ * @return array
  */
 function xmldecode($str){
     $data = simplexml_load_string($str);
-    function xml_decode($data){
-        $data = get_object_vars($data);
-        foreach ($data as &$node){
-            if (is_object($node))
-                $node = xml_decode($node);
-        }
-        return $data;
-    }
-    $data = xml_decode($data);
+    
+    $data = _xmldecode($data);
     return $data;
 }
+/**
+ * xmldecode子函数
+ * @param array $data
+ * @return array
+ */
+function _xmldecode($data){
+    $data = get_object_vars($data);
+    foreach ($data as &$node){
+        if (is_object($node))
+            $node = _xmldecode($node);
+    }
+    return $data;
+}
+/*
+ * END xml解码
+ */
 
-/* 
+/**
  * xml档案转换到数组, xml => array
- * @from http://us3.php.net/manual/en/function.xml-parse.php
+ * @author http://us3.php.net/manual/en/function.xml-parse.php
  * @param string $target 解析对象，可以是文件路径/URL地址
+ * @param int $get_attributes
+ * @param string $priority
+ * @return array
  */
 function xml2array($target, $get_attributes = 1, $priority = 'tag')
 {
@@ -472,9 +496,9 @@ function xml2array($target, $get_attributes = 1, $priority = 'tag')
 
 /**
  * 返回字符串的拼音
- * @param type $_String
- * @param type $_Code
- * @return type
+ * @param string $_String
+ * @param string $_Code
+ * @return string
  */
 function pinyin($_String, $_Code = 'UTF8') { //GBK页面可改为gb2312，其他随意填写为UTF8
     $_DataKey = "a|ai|an|ang|ao|ba|bai|ban|bang|bao|bei|ben|beng|bi|bian|biao|bie|bin|bing|bo|bu|ca|cai|can|cang|cao|ce|ceng|cha" .
@@ -538,10 +562,21 @@ function pinyin($_String, $_Code = 'UTF8') { //GBK页面可改为gb2312，其他
     }
     return preg_replace("/[^a-z0-9]*/", '', $_Res);
 }
+/**
+ * pinyin子函数
+ * @param mixed $_Num
+ * @return mixed
+ */
 function _Dict($_Num) {
     $_Dict = array(-2354=>'xin');
     return isset($_Dict[$_Num]) ? $_Dict[$_Num] : '';
 }
+/**
+ * pinyin子函数
+ * @param mixed $_Num
+ * @param mixed $_Data
+ * @return mixed
+ */
 function _Pinyin($_Num, $_Data) {
     if ($_Num > 0 && $_Num < 160) {
         return chr($_Num);
@@ -555,6 +590,11 @@ function _Pinyin($_Num, $_Data) {
         return $k;
     }
 }
+/**
+ * pinyin子函数
+ * @param mixed $_C
+ * @return mixed
+ */
 function _U2_Utf8_Gb($_C) {
     $_String = '';
     if ($_C < 0x80) {
@@ -699,11 +739,11 @@ function getCurrency($currency) {
 
 /**
  * 全角字符转换为半角 
- * @param type $str 传入要转换的字符串
- * @param type $sbc2dbc 0：全角转半角， 1： 半角转全角
- * @return boolean
+ * @param string $str 传入要转换的字符串
+ * @param enum $sbc2dbc 0：全角转半角， 1： 半角转全角
+ * @return string
  */
-function dbc2sbc($str, $sbc2dbc = 0, $key = null) {
+function dbc2sbc($str, $sbc2dbc = 0) {
         $dbc2sbc = array (
                 '０' => '0','１' => '1','２' => '2', '３' => '3',
                 '４' => '4','５' => '5','６' => '6','７' => '7',

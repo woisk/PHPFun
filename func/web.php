@@ -1,9 +1,13 @@
 <?php
+/**
+ * web页面相关
+ * @author wuxiao
+ */
 
 /**
  * 弹出提示
- * @param type $msg 提示文字
- * @param type $url 弹出提示后跳转页面
+ * @param string $msg 提示文字
+ * @param string $url 弹出提示后跳转页面
  */
 function alert($msg = null, $url = null) {
     $session_key = 'alert_message';
@@ -27,9 +31,9 @@ function alert($msg = null, $url = null) {
 
 /**
  * 延迟跳转
- * @param type $url 跳转地址
- * @param type $timeout 延迟时间，秒为单位
- * @param type $msg 跳转前显示的提示文字
+ * @param string $url 跳转地址
+ * @param int $timeout 延迟时间，秒为单位
+ * @param string $msg 跳转前显示的提示文字
  */
 function delay($url = '/',$timeout = 5,$msg = ''){
     if (intval($timeout) <= 0)
@@ -52,8 +56,13 @@ function verifycode($format = ''){
     include FUN_LIB.'verifycode'.EXT;
 }
 
-//用途：压缩html、js、css代码
-//返回值: 压缩后的$string
+/**
+ * 用途：压缩html、js、css代码
+ * 
+ * 返回压缩后的$string
+ * @param string $string
+ * @return string
+ */
 function compress_html($string) {
     $string = preg_replace('/([\n\r][^<]*?(?<!:|\"|\'))\/\/[^\n\r]*/', '\1', $string);//清除js单行注释
     $string = str_replace("\r\n", '', $string); //清除换行符
@@ -78,11 +87,16 @@ function compress_html($string) {
     return preg_replace($pattern, $replace, $string);
 }
 
-/*
+/**
  * 如果你的网页内容的html标签显示不全,
+ * 
  * 有些表格标签不完整而导致页面混乱,
+ * 
  * 或者把你的内容之外的局部html页面给包含进去了,
+ * 
  * 我们可以写个函数方法来补全html标签以及过滤掉无用的html标签
+ * @param string $string
+ * @return string
  */
 function closetags($html) {
     preg_match_all('#<(?!meta|img|br|hr|input\b)\b([a-z]+)(?: .*)?(? #iU', $html, $result);
@@ -133,8 +147,8 @@ function t($text, $parse_br = false, $quote_style = ENT_NOQUOTES) {
 
 /**
  * 输出安全的html，最快速，危险代码全部删光
- * @param type $text
- * @param type $tags
+ * @param string $text
+ * @param string $tags 忽略的html标签列表，例如table|tbody|td|th|tr
  */
 function h($text, $tags = null) {
     $text = trim($text);
@@ -282,7 +296,8 @@ function RemoveXSS($val) {
 
 /**
  * Discuz系统中 防止XSS漏洞攻击，过滤HTML危险标签属性的PHP函数，效率中等，效果中等
- * @param type $html
+ * @param string $html
+ * @return string
  */
 function checkhtml($html) {
 	preg_match_all("/\<([^\<]+)\>/is", $html, $ms);
@@ -327,9 +342,9 @@ function checkhtml($html) {
 
 /**
  * Discuz系统中的htmlspecialchars函数升级版 
- * @param type $string
- * @param type $flags
- * @param type $charset
+ * @param string $string
+ * @param enum $flags ENT_COMPAT|ENT_QUOTES|ENT_NOQUOTES|ENT_IGNORE|ENT_SUBSTITUTE|ENT_DISALLOWED|ENT_HTML401|ENT_XML1|ENT_XHTML|ENT_HTML5
+ * @param string $charset
  */
 function dhtmlspecialchars($string, $flags = null, $charset = 'utf-8') {
 	if(is_array($string)) {
@@ -360,8 +375,9 @@ function dhtmlspecialchars($string, $flags = null, $charset = 'utf-8') {
 
 /**
  * 加载js，内带一些常用组件cdn地址
- * @example 
+ * 
  * js('jquery')
+ * @return int
  */
 function js(){
     static $jn = 0;
@@ -392,8 +408,9 @@ function js(){
 
 /**
  * 加载css，内带一些常用样式
- * @example 
+ * 
  * css('bootstrap')
+ * @return int
  */
 function css(){
     static $cn = 0;

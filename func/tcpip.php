@@ -1,7 +1,12 @@
 <?php
+/**
+ * tcpip请求相关
+ * @author wuxiao
+ */
 
 /**
  * 随机生成国内ip地址
+ * @return string
  */
 function rand_ip(){
     $ip_long = array(
@@ -23,19 +28,31 @@ function rand_ip(){
 
 /**
  * 复杂版的socket交互函数
+ * @param enum $verb HTTP Request Method (GET and POST supported)
+ * @param string $ip Target IP/Hostname
+ * @param int $port Target TCP port
+ * @param string $uri Target URI
+ * @param array|string $getdata HTTP GET Data ie. array('var1' => 'val1', 'var2' => 'val2')
+ * @param array|string $postdata HTTP POST Data ie. array('var1' => 'val1', 'var2' => 'val2')
+ * @param array|string $cookie HTTP Cookie Data ie. array('var1' => 'val1', 'var2' => 'val2')
+ * @param array $custom_headers Custom HTTP headers ie. array('Referer: http://localhost/
+ * @param int $timeout Socket timeout in seconds
+ * @param boolean $req_hdr Include HTTP request headers
+ * @param boolean $res_hdr Include HTTP response headers
+ * @return string
  */
 function http_request(
-    $verb = 'GET',             /* HTTP Request Method (GET and POST supported) */ 
-    $ip,                       /* Target IP/Hostname */ 
-    $port = 80,                /* Target TCP port */ 
-    $uri = '/',                /* Target URI */ 
-    $getdata = array(),        /* HTTP GET Data ie. array('var1' => 'val1', 'var2' => 'val2') */ 
-    $postdata = array(),       /* HTTP POST Data ie. array('var1' => 'val1', 'var2' => 'val2') */ 
-    $cookie = array(),         /* HTTP Cookie Data ie. array('var1' => 'val1', 'var2' => 'val2') */ 
-    $custom_headers = array(), /* Custom HTTP headers ie. array('Referer: http://localhost/ */ 
-    $timeout = 1,           /* Socket timeout in seconds */ 
-    $req_hdr = false,          /* Include HTTP request headers */ 
-    $res_hdr = false           /* Include HTTP response headers */ 
+    $verb = 'GET',
+    $ip,
+    $port = 80,
+    $uri = '/',
+    $getdata = array(),
+    $postdata = array(),
+    $cookie = array(),
+    $custom_headers = array(),
+    $timeout = 1,
+    $req_hdr = false,
+    $res_hdr = false
     )
 {
     $ret = '';
@@ -105,12 +122,17 @@ function http_request(
 
 /**
  * 简单版的socket交互函数
+ * @param string $ip Target IP/Hostname
+ * @param int $port Target TCP port
+ * @param string $req Target URI
+ * @param int $timeout Socket timeout in seconds
+ * @return string
  */
 function socket_request(
-    $ip,                       /* Target IP/Hostname */ 
-    $port = 80,                /* Target TCP port */ 
-    $req = '',                /* Target URI */
-    $timeout = 1           /* Socket timeout in seconds */ 
+    $ip,
+    $port = 80,
+    $req = '',
+    $timeout = 1
     )
 {
     $ret = '';
@@ -129,17 +151,25 @@ function socket_request(
     return $ret;
 }
 
-/* 发送字节流数据
+/**
+ * 发送字节流数据
  * 
  * 接收端如何接收：
+ * 
  * file_get_contents("php://input");
+ * @param string $url Target IP/Hostname
+ * @param string $data Data to send
+ * @param int $timeout Socket timeout in seconds
+ * @param boolean $req_hdr Include HTTP request headers
+ * @param boolean $res_hdr Include HTTP response headers
+ * @return string
  */
 function phpinput(
-    $url,                       /* Target IP/Hostname */
+    $url,
     $data = '',
-    $timeout = 1,           /* Socket timeout in seconds */
-    $req_hdr = false,          /* Include HTTP request headers */ 
-    $res_hdr = false           /* Include HTTP response headers */ 
+    $timeout = 1,
+    $req_hdr = false,
+    $res_hdr = false
     ) 
 {
     if (!$url = parse_url($url))
@@ -182,8 +212,8 @@ function phpinput(
 
 /**
  * 创建udp服务器
- * @param type $ip
- * @param type $port
+ * @param string $ip
+ * @param int $port
  * @param Closure $callback
  */
 function udp_server($ip,$port,Closure $callback){
@@ -220,9 +250,9 @@ function udp_server($ip,$port,Closure $callback){
 
 /**
  * 发送udp请求
- * @param type $ip ip地址
- * @param type $port 端口
- * @param type $data 发送的数据
+ * @param string $ip ip地址
+ * @param int $port 端口
+ * @param string $data 发送的数据
  * @return string
  */
 function udp($ip, $port, $data = ''){

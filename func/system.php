@@ -1,10 +1,16 @@
 <?php
+/**
+ * 系统相关
+ * @author wuxiao
+ */
 
 /**
  * 记录日志
- * @param type $text 日志内容
- * @param type $pre 日志文件名前缀
- * @param type $by_date 是否按日期存日志
+ * @param string $text 日志内容
+ * @param string $pre 日志文件名前缀
+ * @param string $dir
+ * @param boolean $by_date 是否按日期存日志
+ * @return boolean
  */
 function writelog($text,$pre = 'PHPFun',$dir = null, $by_date = true){
     if (!is_dir($dir)){
@@ -32,10 +38,11 @@ function writelog($text,$pre = 'PHPFun',$dir = null, $by_date = true){
 
 /**
  * 载入php扩展
+ * 
+ * load('redis);
  * @param string $ext
  * @param string $or_ext
  * @return boolean
- * @example load('redis);
  */
 function load($ext,$or_ext = null){
 	if (extension_loaded($ext)) return true;
@@ -54,7 +61,7 @@ function load($ext,$or_ext = null){
 
 /**
  * 开启php错误提示
- * @param type $level
+ * @param int $level
  */
 function debug($level = E_ALL){
     ini_set('display_errors',true);
@@ -71,8 +78,8 @@ function nodebug() {
 
 /**
  * 操作session
- * @param type $key
- * @param type $value
+ * @param string $key
+ * @param mixed $value
  */
 function session($key, $value = null) {
     if ((!$session_Id = session_id()) && !headers_sent()) {
@@ -94,10 +101,10 @@ function session($key, $value = null) {
 
 /**
  * 存储/获取缓存
- * @param type $key
- * @param type $value
- * @param type $lifetime
- * @return type
+ * @param string $key
+ * @param mixed $value
+ * @param int $lifetime
+ * @return boolean
  */
 function cache($key, $value = null, $lifetime = 3600){
     $cache = new Cached;
@@ -112,8 +119,8 @@ function cache($key, $value = null, $lifetime = 3600){
 
 /**
  * 存储页面缓存
- * @param type $key
- * @param type $lifetime
+ * @param string $key
+ * @param int $lifetime
  */
 function store($key, $lifetime = 3600){
     @ob_start();
@@ -128,8 +135,8 @@ function store($key, $lifetime = 3600){
 
 /**
  * 从网络传输文件，直接使用linux的wget命令
- * @param type $inputfile 来源地址
- * @param type $outputfile 输出文件路径
+ * @param string $inputfile 来源地址
+ * @param string $outputfile 输出文件路径
  * @return int
  */
 function wget($inputfile,$outputfile)
@@ -157,8 +164,9 @@ function wget($inputfile,$outputfile)
    return 0;
 }
 
-/*
+/**
  * 判断当前是否在命令行模式下
+ * @return boolean
  */
 function is_cmd(){
     return (PHP_SAPI === 'cli') or isset($_SERVER['argv']);
@@ -166,16 +174,15 @@ function is_cmd(){
 
 /**
  * 添加非守护进程
- * @return int
- * @example 
  * 
-    $a = 890;
-    $pid = fork(function() use ($a){
-        echo $a;
-        sleep(1);
-    },function(){
-        echo 456;
-    });
+ *  $a = 890;
+ *  $pid = fork(function() use ($a){
+ *      echo $a;
+ *      sleep(1);
+ *  },function(){
+ *      echo 456;
+ *  });
+ * @return int
  */
 function fork(){
     $child_threads = func_get_args();
@@ -189,16 +196,15 @@ function fork(){
 
 /**
  * 添加守护进程
- * @return int
- * @example 
  * 
-    $a = 890;
-    $pid = daemon(function() use ($a){
-        echo $a;
-        sleep(1);
-    },function(){
-        echo 456;
-    });
+ *  $a = 890;
+ *  $pid = daemon(function() use ($a){
+ *      echo $a;
+ *      sleep(1);
+ *  },function(){
+ *      echo 456;
+ *  });
+ * @return int
  */
 function daemon(){
     $child_threads = func_get_args();

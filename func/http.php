@@ -1,4 +1,8 @@
 <?php
+/**
+ * http相关
+ * @author wuxiao
+ */
 
 /**
  * 是否微信访问
@@ -9,9 +13,8 @@ function im_weixin(){
 }
 
 /**
-*
-*手机移动设备识别函数
-*
+* 手机移动设备识别函数
+* @return boolean
 **/
 function im_mobile() {
     $user_agent = $_SERVER['HTTP_USER_AGENT'];
@@ -40,9 +43,9 @@ function im_mobile() {
 
 /**
  * 处理$_FILES上传的文件，返回文件本地路径
- * @param type $name
- * @param type $UploadDir
- * @param type $datedir
+ * @param string $name
+ * @param string $UploadDir
+ * @param boolean $datedir
  * @return boolean
  */
 function upload($name, $UploadDir = 'upload', $datedir = true) {
@@ -73,7 +76,7 @@ function upload($name, $UploadDir = 'upload', $datedir = true) {
  * @param string $url 重定向的URL地址
  * @param integer $time 重定向的等待时间（秒）
  * @param string $msg 重定向前的提示信息
- * @return void
+ * @return null
  */
 function redirect($url, $time=0, $msg='') {
     //多行URL地址支持
@@ -99,9 +102,9 @@ function redirect($url, $time=0, $msg='') {
 
 /**
  * 获得当前页面的域名，可以带上自定义uri
- * @param type $uri
- * @param type $pre
- * @return type
+ * @param string $uri
+ * @param string $pre
+ * @return string
  */
 function domain($uri = '',$pre = 'http'){
     if (isset($_SERVER['HTTP_HOST']))
@@ -118,7 +121,7 @@ function domain($uri = '',$pre = 'http'){
 
 /**
  * 获得当前页面的完整url
- * @return type
+ * @return string
  */
 function url(){
     $url = (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == '443') ? 'https://' : 'http://';
@@ -129,8 +132,8 @@ function url(){
 
 /**
  * 获取url字符串中的顶级域名部分
- * @param type $url
- * @return type
+ * @param string $url
+ * @return string
  */
 function topdomain($url) {
     $host = strtolower($url);
@@ -155,9 +158,9 @@ function topdomain($url) {
 
 /**
  * 返回$_POST内容
- * @param type $key
- * @param type $default
- * @return type
+ * @param string $key
+ * @param mixed $default
+ * @return mixed
  */
 function post($key = null, $default = null) {
     $o = $_POST;
@@ -170,9 +173,9 @@ function post($key = null, $default = null) {
 
 /**
  * 返回$_GET内容
- * @param type $key
- * @param type $default
- * @return type
+ * @param string $key
+ * @param mixed $default
+ * @return mixed
  */
 function get($key = null, $default = null) {
     $o = $_GET;
@@ -185,9 +188,9 @@ function get($key = null, $default = null) {
 
 /**
  * 返回$_REQUEST内容
- * @param type $key
- * @param type $default
- * @return type
+ * @param string $key
+ * @param mixed $default
+ * @return mixed
  */
 function request($key = null, $default = null) {
     $o = $_REQUEST;
@@ -200,7 +203,7 @@ function request($key = null, $default = null) {
 
 /**
  * 获取ip地址
- * @return type
+ * @return string
  */
 function getip(){
     $onlineipmatches = array();
@@ -222,7 +225,7 @@ function getip(){
 
 /**
  * 在线获取服务器端IP
- * @return type
+ * @return string
  */
 function localip() {
     if (extension_loaded('curl')) {
@@ -246,10 +249,12 @@ function localip() {
     return error('[web\localip] cannot get any ip by preg match');
 }
 
-/**
- * 组装cookie数组为字符串
- */
 if (!function_exists('http_build_cookie')){
+    /**
+     * 组装cookie数组为字符串
+     * @param array $cookie
+     * @return string
+     */
     function http_build_cookie(array $cookie){
         $cookie_str = '';
         foreach ($cookie as $name=>$value){
@@ -261,11 +266,14 @@ if (!function_exists('http_build_cookie')){
 
 /**
  * CURL
- * @param type $url
- * @param type $post
- * @param type $cookies
- * @param type $headers
- * @return boolean
+ * @param string $url
+ * @param array|string $post
+ * @param int $timeout
+ * @param array|string $cookies
+ * @param array|string $headers
+ * @param string $user_agent
+ * @param string $referer
+ * @return string|boolean
  */
 function curl($url, $post = null, $timeout = 120, $cookies = null, $headers = null, $user_agent = null, $referer = null) {
     if (!$url)
@@ -322,49 +330,86 @@ function curl($url, $post = null, $timeout = 120, $cookies = null, $headers = nu
 
 /**
  * CURL多并发
+ * 
+ *  $urls = array(
+ * 
+ *      //post数据
+ * 
+ *      'post'=>array(
+ * 
+ *          'name'=>'abc',
+ * 
+ *          'get'=>true
+ * 
+ *      ),
+ * 
+ *      //超时时间，秒
+ * 
+ *      'timeout'=>120,
+ * 
+ *      //cookie数据
+ * 
+ *      'cookies'=>'asos=userCountryIso=CN&topcatid=1000&currencyid=2&currencylabel=USD',
+ * 
+ *      //header数据
+ * 
+ *      '$headers'=>array(
+ * 
+ *          'X-FORWARDED-FOR'=>'127.0.0.1',
+ * 
+ *          'CLIENT-IP'=>'127.0.0.1'
+ * 
+ *      ),
+ * 
+ *      //useragent信息
+ * 
+ *      'user_agent'=>'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0',
+ * 
+ *      //请求来源信息
+ * 
+ *      'referer'=>'http://127.0.0.1/',
+ * 
+ *      CURLOPT_FOLLOWLOCATION=>0
+ * 
+ *  );
+ * 
+ * OR
+ * 
+ *  $urls = array(
+ * 
+ *      array(
+ * 
+ *          'post'=>'asos=userCountryIso=CN&topcatid=1000&currencyid=2&currencylabel=USD',
+ * 
+ *          'timeout'=>5,
+ * 
+ *      ),
+ * 
+ *      array(
+ * 
+ *          CURLOPT_TIMEOUT=>5,
+ * 
+ *          CURLOPT_TIMEOUT=>30,
+ * 
+ *          'cookies'=>'asos=userCountryIso=CN&topcatid=1000&currencyid=2&currencylabel=USD',
+ * 
+ *          'headers'=>'X-FORWARDED-FOR:127.0.0.1',
+ * 
+ *      ),
+ * 
+ *      array(
+ * 
+ *          CURLOPT_HEADER=>1,
+ * 
+ *          'user_agent'=>'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0',
+ * 
+ *          'referer'=>'http://127.0.0.1/'
+ * 
+ *      )
+ * 
+ *  );
  * @param array $urls 要请求的url地址数组
  * @param array $options curl请求选项
- * @example 
- * array(
-        //post数据
-        'post'=>array(
-            'name'=>'abc',
-            'get'=>true
-        ),
-        //超时时间，秒
-        'timeout'=>120,
-        //cookie数据
-        'cookies'=>'asos=userCountryIso=CN&topcatid=1000&currencyid=2&currencylabel=USD',
-        //header数据
-        '$headers'=>array(
-            'X-FORWARDED-FOR'=>'127.0.0.1',
-            'CLIENT-IP'=>'127.0.0.1'
-        ),
-        //useragent信息
-        'user_agent'=>'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0',
-        //请求来源信息
-        'referer'=>'http://127.0.0.1/',
-        CURLOPT_FOLLOWLOCATION=>0
-    );
- * @example2
- * array(
-        array(
-            'post'=>'asos=userCountryIso=CN&topcatid=1000&currencyid=2&currencylabel=USD',
-            'timeout'=>5,
-        ),
-        array(
-            CURLOPT_TIMEOUT=>5,
-            CURLOPT_TIMEOUT=>30,
-            'cookies'=>'asos=userCountryIso=CN&topcatid=1000&currencyid=2&currencylabel=USD',
-            'headers'=>'X-FORWARDED-FOR:127.0.0.1',
-        ),
-        array(
-            CURLOPT_HEADER=>1,
-            'user_agent'=>'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0',
-            'referer'=>'http://127.0.0.1/'
-        )
-    );
- * 
  * @return array
  */
 function curl_multi(array $urls, array $options = null) {
@@ -485,7 +530,7 @@ function curl_multi(array $urls, array $options = null) {
 
 /**
  * 检查url资源是否存在
- * @param type $url
+ * @param string $url
  * @return boolean
  */
 function url_exists($url)  
@@ -568,8 +613,8 @@ function url_exists($url)
 
 /**
  * 获得线上文件的大小
- * @param type $url
- * @return null
+ * @param string $url
+ * @return int
  */
 function online_filesize($url) {
     if (function_exists('curl_init'))
@@ -624,8 +669,8 @@ function online_filesize($url) {
 
 /**
  * 获得线上文件的类型
- * @param type $url
- * @return null
+ * @param string $url
+ * @return string
  */
 function online_filetype($url) {
     if (function_exists('curl_init'))
@@ -667,10 +712,10 @@ function online_filetype($url) {
 
 /**
  * 通过CURL向指定的url路径上传文件
- * @param type $url
- * @param type $file
- * @param type $postFields
- * @param type $fieldname
+ * @param string $url
+ * @param string $file
+ * @param array|string $postFields
+ * @param string $fieldname
  * @return boolean
  */
 function curl_upload($url, $file, $postFields = null, $fieldname = 'file') {
@@ -713,11 +758,13 @@ function curl_upload($url, $file, $postFields = null, $fieldname = 'file') {
 
 /**
  * file_get_contents改进版
- * @param str $path
+ * @param string $path
  * @param int $timeout
- * @param array $post
- * @param array $headers
- * @return type
+ * @param array|string $post
+ * @param array|string $headers
+ * @param string $user_agent
+ * @param string $referer
+ * @return string
  */
 function file_get_contents_v2($path, $timeout = 120, $post = null, $headers = null, $user_agent = null, $referer = null) {
     if (is_file($path) || is_link($path) || is_dir($path)){
@@ -769,7 +816,7 @@ function file_get_contents_v2($path, $timeout = 120, $post = null, $headers = nu
 /**
  * 发送HTTP状态
  * @param integer $code 状态码
- * @return void
+ * @return null
  */
 function send_http_status($code) {
     static $_status = array(

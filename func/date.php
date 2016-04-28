@@ -1,9 +1,13 @@
 <?php
+/**
+ * 时间日期
+ * @author wuxiao
+ */
 
 /**
 * 把时间转换成几分钟前、几小时前、几天前的文字
-* @param type $time
-* @return type
+* @param int $time
+* @return string
 */
 function timeTran($time) {
     $t = time() - $time;

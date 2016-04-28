@@ -1,8 +1,14 @@
 <?php
+/**
+ * ftp
+ * @author wuxiao
+ */
 
 /**
  * 连接ftp
- * @param type $ftp
+ * 
+ * $ftp = 'ftp://user:pass@192.168.99.1:21'
+ * @param string $ftp
  * @return boolean
  */
 function ftp_connect_v2($ftp){
@@ -30,15 +36,14 @@ function ftp_connect_v2($ftp){
 
 /**
  * 上传文件到ftp
- *  
+ * 
+ * $ftp = 'ftp://username:password@115.216.196.218:21';
+ * 
+ * $ret = ftp_upload($ftp,'/data/bak/test.js','/data/www/ucenter/data/test123.js');
  * @param string $ftp ftp连接url
  * @param string $source 本地文件路径
  * @param string $target 上传目标文件，可带ftp目标路径
  * @return boolean
- * 
- * @example 
- *  $ftp = 'ftp://username:password@115.216.196.218:21';
- *  $ret = ftp_upload($ftp,'/data/bak/test.js','/data/www/ucenter/data/test123.js');
  */
 function ftp_upload($ftp,$source,$target){
     if (!is_object($fp = ftp_connect_v2($ftp)))
@@ -51,13 +56,13 @@ function ftp_upload($ftp,$source,$target){
 
 /**
  * 从ftp删除文件
- * @param type $ftp
- * @param type $path
- * @return boolean
  * 
- * @example 
  * $ftp = 'ftp://username:password@115.216.196.218:21';
+ * 
  * ftp_upload($ftp,'/data/www/ucenter/data/test123.js');
+ * @param string $ftp
+ * @param string $path
+ * @return boolean
  */
 function ftp_del($ftp, $path){
     if (!is_object($fp = ftp_connect_v2($ftp)))

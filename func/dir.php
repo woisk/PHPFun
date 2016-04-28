@@ -1,8 +1,12 @@
 <?php
+/**
+ * 目录操作
+ * @author wuxiao
+ */
 
 /**
  * 创建文件夹
- * @param type $dir
+ * @param string $dir
  * @return boolean|int
  */
 function mk_dir($dir) {
@@ -23,8 +27,8 @@ function mk_dir($dir) {
 
 /**
  * 相当于linux下的ls命令
- * @param type $pattern
- * @return type
+ * @param string $pattern
+ * @return array
  */
 function ls($pattern = '*'){
     return glob($pattern);
@@ -34,7 +38,7 @@ function ls($pattern = '*'){
  * 根据名称在目录下查找文件&文件夹
  * @param string $pattern
  * @param string $dir
- * @return type
+ * @return array
  */
 function find($pattern,$dir = __ROOT__){
     $dir = trim($dir,'/\\').DS;
@@ -54,7 +58,7 @@ function find($pattern,$dir = __ROOT__){
  * 根据名称在目录下查找文件夹
  * @param string $pattern
  * @param string $dir
- * @return type
+ * @return array
  */
 function finddir($pattern,$dir = __ROOT__){
     $dir = trim($dir,'/\\').DS;
@@ -75,7 +79,7 @@ function finddir($pattern,$dir = __ROOT__){
  * 根据名称在目录下查找文件
  * @param string $pattern
  * @param string $dir
- * @return type
+ * @return array
  */
 function findfile($pattern,$dir = __ROOT__){
     $dir = trim($dir,'/\\').DS;

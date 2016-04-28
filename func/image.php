@@ -1,16 +1,20 @@
 <?php
+/**
+ * 图片相关
+ * @author wuxiao
+ */
 
 /**
  * 从源图生成缩略图
- * @param type $srcFile 源文件
- * @param type $dstFile 目标文件
- * @param type $dstW 目标图片宽度
- * @param type $dstH 目标图片高度
- * @param type $deform ?
- * @param type $rate 目标图片质量，满分100
- * @param type $markwords 水印文字
- * @param type $markimage 水印图片
- * @return boolean
+ * @param string $srcFile 源文件
+ * @param string $dstFile 目标文件
+ * @param int $dstW 目标图片宽度
+ * @param int $dstH 目标图片高度
+ * @param boolean $deform 是否允许图片变形
+ * @param int $rate 目标图片质量，满分100
+ * @param string $markwords 水印文字
+ * @param string $markimage 水印图片
+ * @return string|boolean
  */
 function makethumb($srcFile, $dstFile, $dstW = null, $dstH = null, $deform = null, $rate = 80, $markwords = null, $markimage = null) {
     if (is_null($dstW) && is_null($dstH)){
