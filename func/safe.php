@@ -6,10 +6,10 @@
 
 /**
  * 来自ucenter的加/解密函数
- * @param string $string
- * @param enum $operation DECODE|ENCODE
- * @param string $key
- * @param int $expiry 过期时间
+ * @param string $string 要加/解密的字符串
+ * @param enum $operation 操作类型，DECODE：解密，ENCODE：加密
+ * @param string $key 自定义盐
+ * @param int $expiry 加密结果过期时间
  * @return string
  */
 function uc_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
@@ -64,7 +64,7 @@ function uc_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
 
 /**
  * 注入预防
- * @param string $value
+ * @param string $value 要检验的数据
  * @return boolean
  */
 function DOkillinject(&$value) {

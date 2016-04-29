@@ -4,16 +4,19 @@
  * @author wuxiao
  */
 
-//单元测试结果允许显示
+/**
+ * 单元测试结果允许显示
+ */
 defined('UT_RENDER') or define('UT_RENDER', 1);
-//单元测试结果禁止显示
+/**
+ * 单元测试结果禁止显示
+ */
 defined('UT_NORENDER') or define('UT_NORENDER', 0);
 $GLOBALS['_runtime'] = array();
 $GLOBALS['unittest_string_length'] = 0;
 
 /**
  * 单元测试开始
- * @global array $_runtime
  * @param string $tag 单元标签
  * @param enum $render 1：显示，0：不显示
  * @return array
@@ -39,7 +42,6 @@ function ut_start($tag = null,$render = UT_RENDER){
 
 /**
  * 步进，输出每一步之间对比的单元测试数据
- * @global array $_runtime
  * @param string $tag 单元标签
  * @param enum $render 1：显示，0：不显示
  * @return array
@@ -97,7 +99,6 @@ function ut_step($tag = null,$render = UT_RENDER){
 
 /**
  * 断点，每次输出断点处的单元测试数据
- * @global array $_runtime
  * @param string $tag 单元标签
  * @param enum $render 1：显示，0：不显示
  * @return array
@@ -142,8 +143,6 @@ function ut_breakpoint($tag = null,$render = UT_RENDER){
 
 /**
  * 单元测试结束
- * @global array $_runtime
- * @global type $startLength
  * @param string $tag 单元标签
  * @param enum $render 1：显示，0：不显示
  * @return array

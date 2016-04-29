@@ -60,7 +60,7 @@ function verifycode($format = ''){
  * 用途：压缩html、js、css代码
  * 
  * 返回压缩后的$string
- * @param string $string
+ * @param string $string html内容
  * @return string
  */
 function compress_html($string) {
@@ -95,7 +95,7 @@ function compress_html($string) {
  * 或者把你的内容之外的局部html页面给包含进去了,
  * 
  * 我们可以写个函数方法来补全html标签以及过滤掉无用的html标签
- * @param string $string
+ * @param string $string html内容
  * @return string
  */
 function closetags($html) {
@@ -121,7 +121,7 @@ function closetags($html) {
 /**
  * 转换为安全的纯文本
  *
- * @param string  $text
+ * @param string  $text html内容
  * @param boolean $parse_br    是否转换换行符
  * @param int     $quote_style ENT_NOQUOTES:(默认)不过滤单引号和双引号 ENT_QUOTES:过滤单引号和双引号 ENT_COMPAT:过滤双引号,而不过滤单引号
  * @return string|null string:被转换的字符串 null:参数错误
@@ -147,7 +147,7 @@ function t($text, $parse_br = false, $quote_style = ENT_NOQUOTES) {
 
 /**
  * 输出安全的html，最快速，危险代码全部删光
- * @param string $text
+ * @param string $text html内容
  * @param string $tags 忽略的html标签列表，例如table|tbody|td|th|tr
  */
 function h($text, $tags = null) {
@@ -296,7 +296,7 @@ function RemoveXSS($val) {
 
 /**
  * Discuz系统中 防止XSS漏洞攻击，过滤HTML危险标签属性的PHP函数，效率中等，效果中等
- * @param string $html
+ * @param string $html html内容
  * @return string
  */
 function checkhtml($html) {
@@ -342,9 +342,9 @@ function checkhtml($html) {
 
 /**
  * Discuz系统中的htmlspecialchars函数升级版 
- * @param string $string
+ * @param string $string html内容
  * @param enum $flags ENT_COMPAT|ENT_QUOTES|ENT_NOQUOTES|ENT_IGNORE|ENT_SUBSTITUTE|ENT_DISALLOWED|ENT_HTML401|ENT_XML1|ENT_XHTML|ENT_HTML5
- * @param string $charset
+ * @param string $charset 字符编码
  */
 function dhtmlspecialchars($string, $flags = null, $charset = 'utf-8') {
 	if(is_array($string)) {
@@ -377,6 +377,9 @@ function dhtmlspecialchars($string, $flags = null, $charset = 'utf-8') {
  * 加载js，内带一些常用组件cdn地址
  * 
  * js('jquery')
+ * @param string $param1 第一个要加载的类库
+ * @param string $param2 第二个要加载的类库
+ * ...
  * @return int
  */
 function js(){
@@ -410,6 +413,9 @@ function js(){
  * 加载css，内带一些常用样式
  * 
  * css('bootstrap')
+ * @param string $param1 第一个要加载的样式
+ * @param string $param2 第二个要加载的样式
+ * ...
  * @return int
  */
 function css(){

@@ -8,7 +8,7 @@
  * 记录日志
  * @param string $text 日志内容
  * @param string $pre 日志文件名前缀
- * @param string $dir
+ * @param string $dir 根目录
  * @param boolean $by_date 是否按日期存日志
  * @return boolean
  */
@@ -39,9 +39,11 @@ function writelog($text,$pre = 'PHPFun',$dir = null, $by_date = true){
 /**
  * 载入php扩展
  * 
- * load('redis);
- * @param string $ext
- * @param string $or_ext
+ * load('redis');
+ * 
+ * load('redis','Redis');
+ * @param string $ext 扩展名称
+ * @param string $or_ext 第二选择的扩展名称
  * @return boolean
  */
 function load($ext,$or_ext = null){
@@ -61,7 +63,7 @@ function load($ext,$or_ext = null){
 
 /**
  * 开启php错误提示
- * @param int $level
+ * @param int $level 错误级别
  */
 function debug($level = E_ALL){
     ini_set('display_errors',true);
@@ -78,8 +80,8 @@ function nodebug() {
 
 /**
  * 操作session
- * @param string $key
- * @param mixed $value
+ * @param string $key 字段名称
+ * @param mixed $value 向字段赋值
  */
 function session($key, $value = null) {
     if ((!$session_Id = session_id()) && !headers_sent()) {
@@ -101,9 +103,9 @@ function session($key, $value = null) {
 
 /**
  * 存储/获取缓存
- * @param string $key
- * @param mixed $value
- * @param int $lifetime
+ * @param string $key 缓存名称
+ * @param mixed $value 向缓存赋值
+ * @param int $lifetime 生存时间，秒，如一小时是3600
  * @return boolean
  */
 function cache($key, $value = null, $lifetime = 3600){
@@ -119,8 +121,8 @@ function cache($key, $value = null, $lifetime = 3600){
 
 /**
  * 存储页面缓存
- * @param string $key
- * @param int $lifetime
+ * @param string $key 缓存名称
+ * @param int $lifetime 生存时间，秒，如一小时是3600
  */
 function store($key, $lifetime = 3600){
     @ob_start();
@@ -176,11 +178,17 @@ function is_cmd(){
  * 添加非守护进程
  * 
  *  $a = 890;
+ * 
  *  $pid = fork(function() use ($a){
+ * 
  *      echo $a;
+ * 
  *      sleep(1);
+ * 
  *  },function(){
+ * 
  *      echo 456;
+ * 
  *  });
  * @return int
  */
@@ -198,11 +206,17 @@ function fork(){
  * 添加守护进程
  * 
  *  $a = 890;
+ * 
  *  $pid = daemon(function() use ($a){
+ * 
  *      echo $a;
+ * 
  *      sleep(1);
+ * 
  *  },function(){
+ * 
  *      echo 456;
+ * 
  *  });
  * @return int
  */

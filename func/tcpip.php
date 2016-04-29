@@ -212,9 +212,9 @@ function phpinput(
 
 /**
  * 创建udp服务器
- * @param string $ip
- * @param int $port
- * @param Closure $callback
+ * @param string $ip 服务器ip
+ * @param int $port 服务器端口
+ * @param Closure $callback 接收请求回调函数，参数是udp请求内容
  */
 function udp_server($ip,$port,Closure $callback){
     //服务器信息

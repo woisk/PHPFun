@@ -6,8 +6,8 @@
 
 /**
 * 把时间转换成几分钟前、几小时前、几天前的文字
-* @param int $time
-* @return string
+* @param int $time 时间戳
+* @return string 时间文字
 */
 function timeTran($time) {
     $t = time() - $time;

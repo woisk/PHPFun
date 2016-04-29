@@ -43,9 +43,9 @@ function im_mobile() {
 
 /**
  * 处理$_FILES上传的文件，返回文件本地路径
- * @param string $name
- * @param string $UploadDir
- * @param boolean $datedir
+ * @param string $name 上传表单名
+ * @param string $UploadDir 上传子目录
+ * @param boolean $datedir 是否采用分日期子目录
  * @return boolean
  */
 function upload($name, $UploadDir = 'upload', $datedir = true) {
@@ -102,11 +102,11 @@ function redirect($url, $time=0, $msg='') {
 
 /**
  * 获得当前页面的域名，可以带上自定义uri
- * @param string $uri
- * @param string $pre
+ * @param string $uri 自定义uri
+ * @param string $protocl url协议，http|https
  * @return string
  */
-function domain($uri = '',$pre = 'http'){
+function domain($uri = '',$protocl = 'http'){
     if (isset($_SERVER['HTTP_HOST']))
         $domain = $_SERVER['HTTP_HOST'];
     elseif (isset($_SERVER['SERVER_NAME']))
@@ -116,7 +116,7 @@ function domain($uri = '',$pre = 'http'){
     else
         $domain = '';
     
-    return $pre.'://'.$domain.'/'.$uri;
+    return $protocl.'://'.$domain.'/'.$uri;
 }
 
 /**
@@ -132,7 +132,7 @@ function url(){
 
 /**
  * 获取url字符串中的顶级域名部分
- * @param string $url
+ * @param string $url url字符串
  * @return string
  */
 function topdomain($url) {
@@ -158,8 +158,8 @@ function topdomain($url) {
 
 /**
  * 返回$_POST内容
- * @param string $key
- * @param mixed $default
+ * @param string $key 字段名
+ * @param mixed $default 默认值
  * @return mixed
  */
 function post($key = null, $default = null) {
@@ -173,8 +173,8 @@ function post($key = null, $default = null) {
 
 /**
  * 返回$_GET内容
- * @param string $key
- * @param mixed $default
+ * @param string $key 字段名
+ * @param mixed $default 默认值
  * @return mixed
  */
 function get($key = null, $default = null) {
@@ -188,8 +188,8 @@ function get($key = null, $default = null) {
 
 /**
  * 返回$_REQUEST内容
- * @param string $key
- * @param mixed $default
+ * @param string $key 字段名
+ * @param mixed $default 默认值
  * @return mixed
  */
 function request($key = null, $default = null) {
@@ -252,7 +252,7 @@ function localip() {
 if (!function_exists('http_build_cookie')){
     /**
      * 组装cookie数组为字符串
-     * @param array $cookie
+     * @param array $cookie cookie数组
      * @return string
      */
     function http_build_cookie(array $cookie){
@@ -266,13 +266,13 @@ if (!function_exists('http_build_cookie')){
 
 /**
  * CURL
- * @param string $url
- * @param array|string $post
- * @param int $timeout
- * @param array|string $cookies
- * @param array|string $headers
- * @param string $user_agent
- * @param string $referer
+ * @param string $url 目标url地址
+ * @param array|string $post post数据
+ * @param int $timeout 超时
+ * @param array|string $cookies cookie数组|字串
+ * @param array|string $headers 头信息数组|字串
+ * @param string $user_agent useragent字串
+ * @param string $referer 来源url
  * @return string|boolean
  */
 function curl($url, $post = null, $timeout = 120, $cookies = null, $headers = null, $user_agent = null, $referer = null) {
@@ -530,7 +530,7 @@ function curl_multi(array $urls, array $options = null) {
 
 /**
  * 检查url资源是否存在
- * @param string $url
+ * @param string $url 目标url地址
  * @return boolean
  */
 function url_exists($url)  
@@ -613,7 +613,7 @@ function url_exists($url)
 
 /**
  * 获得线上文件的大小
- * @param string $url
+ * @param string $url 目标url地址
  * @return int
  */
 function online_filesize($url) {
@@ -669,7 +669,7 @@ function online_filesize($url) {
 
 /**
  * 获得线上文件的类型
- * @param string $url
+ * @param string $url 目标url地址
  * @return string
  */
 function online_filetype($url) {
@@ -712,10 +712,10 @@ function online_filetype($url) {
 
 /**
  * 通过CURL向指定的url路径上传文件
- * @param string $url
- * @param string $file
- * @param array|string $postFields
- * @param string $fieldname
+ * @param string $url 目标url地址
+ * @param string $file 要上传的本地文件
+ * @param array|string $postFields 附带的post数据数组|字串
+ * @param string $fieldname 自定义文件表单名
  * @return boolean
  */
 function curl_upload($url, $file, $postFields = null, $fieldname = 'file') {
@@ -758,12 +758,12 @@ function curl_upload($url, $file, $postFields = null, $fieldname = 'file') {
 
 /**
  * file_get_contents改进版
- * @param string $path
- * @param int $timeout
- * @param array|string $post
- * @param array|string $headers
- * @param string $user_agent
- * @param string $referer
+ * @param string $path 目标url地址
+ * @param int $timeout 超时
+ * @param array|string $post post数据数组|字串
+ * @param array|string $headers 头信息数组|字串
+ * @param string $user_agent useragent字串
+ * @param string $referer 来源url
  * @return string
  */
 function file_get_contents_v2($path, $timeout = 120, $post = null, $headers = null, $user_agent = null, $referer = null) {

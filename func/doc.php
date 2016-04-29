@@ -10,8 +10,8 @@
  * excel('test.xlsx',array(array('id','name','createtime'),array(1,'wuxiao','2015-10-9 10:48')));
  * 
  * excel('test.xls',array(array('id','name','createtime'),array(1,'wuxiao','2015-10-9 10:48')),'Excel5');
- * @param string $excel
- * @param array $data
+ * @param string $excel 要生成的excel文件名
+ * @param array $data 数据
  * @param string $writerType 文档类型，Excel2007(后缀xlsx)/Excel5(后缀xls)
  */
 function excel($excel,array $data = null, $writerType = 'Excel2007'){
@@ -53,8 +53,8 @@ function excel($excel,array $data = null, $writerType = 'Excel2007'){
  * zip('test.zip',array('jquery-1.11.1.min.js','jquery-1.8.3.min.js'));
  * 
  * zip('test.zip','jquery-1.11.1.min.js');
- * @param string $zip
- * @param array $files
+ * @param string $zip 要生成的zip文件名
+ * @param array $files 要包含的文件
  * @return bool/string
  */
 function zip($zip,$files = null){
@@ -109,8 +109,8 @@ function zip($zip,$files = null){
 
 /**
  * 备份文件
- * @param string $filename
- * @param boolean $cover
+ * @param string $filename 源文件
+ * @param boolean $cover 是否覆盖已存在的备份文件
  * @return string
  */
 function backup($filename,$cover = null){

@@ -6,7 +6,7 @@
 
 /**
  * 去除一般存储无法识别的字符串，留下可以识别的
- * @param string $str
+ * @param string $str 字符串
  */
 function remove_unrecognized($str){
     $blacklist = array();
@@ -62,7 +62,7 @@ function str_intersect($string1, $string2){
 
 /**
  * 获取字符串长度
- * @param string $str
+ * @param string $str 字符串
  * @return int
  */
 function length($str) {
@@ -88,8 +88,8 @@ function length($str) {
 
 /**
  * 返回随机字符串，数字/大写字母/小写字母
- * @param int $len
- * @param enum $format ALL|CHAR|NUMBER
+ * @param int $len 长度
+ * @param enum $format 格式，ALL：英文字符+数字，CHAR：仅英文字符，NUMBER：仅数字
  * @return string
  */
 function random($len = 6, $format = 'ALL') {
@@ -115,10 +115,10 @@ function random($len = 6, $format = 'ALL') {
 
 /**
  * 截取一定长度的字符串，确保截取后字符串不出乱码
- * @param string $string
- * @param int $length
- * @param string $dot
- * @param string $charset
+ * @param string $string 字符串
+ * @param int $length 截取长度
+ * @param string $dot 后缀
+ * @param string $charset 字符编码
  * @return string
  */
 function cutstr($string, $length, $dot = ' ...', $charset = 'utf-8') {
@@ -186,11 +186,11 @@ function cutstr($string, $length, $dot = ' ...', $charset = 'utf-8') {
 
 /**
  * 来自destoon的字符串截取函数，
- * @param string $string
- * @param int $length
- * @param int $start
- * @param string $suffix
- * @param string $charset
+ * @param string $string 字符串
+ * @param int $length 截取长度
+ * @param int $start 截取开始位置
+ * @param string $suffix 后缀
+ * @param string $charset 字符编码
  * @return string
  */
 function dsubstr($string, $length, $start = 0, $suffix = '', $charset = 'UTF-8') {
@@ -237,7 +237,7 @@ function dsubstr($string, $length, $start = 0, $suffix = '', $charset = 'UTF-8')
 
 /**
  * 将内容进行UNICODE编码，编码后的内容格式：YOKA\王 （原始：YOKA王）
- * @param string $s
+ * @param string $s 原始字符串
  * @return string
  */
 function unicodeencode($s) {
@@ -259,7 +259,7 @@ function unicodeencode($s) {
 
 /**
  * unicode解码
- * @param string $str
+ * @param string $str unicode字符串
  * @return string
  */
 function unicodedecode($str) {
@@ -284,8 +284,8 @@ function unicodedecode($str) {
 
 /**
  * xml编码, array => xml
- * @param array $array
- * @param string $main
+ * @param array $array 要编码的数据
+ * @param string $main 根节点名称
  * @return string
  */
 function xmlencode(array $array,$main = 'xml'){
@@ -321,7 +321,7 @@ function _xmlencode($data){
 
 /**
  * xml解码, xml => array
- * @param string $str
+ * @param string $str 要解码的xml字串
  * @return array
  */
 function xmldecode($str){
@@ -360,12 +360,13 @@ function xml2array($target, $get_attributes = 1, $priority = 'tag')
     $contents = "";
     if (!function_exists('xml_parser_create'))
     {
-        return array ();
+        echo 'function xml_parser_create not exists';
+        return;
     }
     $parser = xml_parser_create('');
     if (!($fp = @ fopen($target, 'rb')))
     {
-        return array ();
+        return;
     }
     while (!feof($fp))
     {
@@ -496,11 +497,11 @@ function xml2array($target, $get_attributes = 1, $priority = 'tag')
 
 /**
  * 返回字符串的拼音
- * @param string $_String
- * @param string $_Code
+ * @param string $_String 字符串
+ * @param string $_Code 字符串编码，GBK页面可改为gb2312，其他随意填写为UTF8
  * @return string
  */
-function pinyin($_String, $_Code = 'UTF8') { //GBK页面可改为gb2312，其他随意填写为UTF8
+function pinyin($_String, $_Code = 'UTF8') {
     $_DataKey = "a|ai|an|ang|ao|ba|bai|ban|bang|bao|bei|ben|beng|bi|bian|biao|bie|bin|bing|bo|bu|ca|cai|can|cang|cao|ce|ceng|cha" .
             "|chai|chan|chang|chao|che|chen|cheng|chi|chong|chou|chu|chuai|chuan|chuang|chui|chun|chuo|ci|cong|cou|cu|" .
             "cuan|cui|cun|cuo|da|dai|dan|dang|dao|de|deng|di|dian|diao|die|ding|diu|dong|dou|du|duan|dui|dun|duo|e|en|er" .
@@ -621,7 +622,7 @@ function _U2_Utf8_Gb($_C) {
 /**
  * 获取字符串首字母, 可传入汉字，字母 ，数字
  *
- * @param String $string
+ * @param String $string 字符串
  * @return String
  */
 function getFirstLetter($string) {
@@ -672,9 +673,9 @@ function getFirstLetter($string) {
 }
 
 /**
- * 获取货币
+ * 根据货币文字标识获取货币图形标识
  * 
- * @param string $currency
+ * @param string $currency 货币文字标识
  * @return string
  */
 function getCurrency($currency) {

@@ -6,7 +6,7 @@
 
 /**
  * 创建文件夹
- * @param string $dir
+ * @param string $dir 文件夹名称和路径
  * @return boolean|int
  */
 function mk_dir($dir) {
@@ -27,7 +27,7 @@ function mk_dir($dir) {
 
 /**
  * 相当于linux下的ls命令
- * @param string $pattern
+ * @param string $pattern 匹配规则
  * @return array
  */
 function ls($pattern = '*'){
@@ -36,8 +36,8 @@ function ls($pattern = '*'){
 
 /**
  * 根据名称在目录下查找文件&文件夹
- * @param string $pattern
- * @param string $dir
+ * @param string $pattern 匹配规则
+ * @param string $dir 搜索目标根目录
  * @return array
  */
 function find($pattern,$dir = __ROOT__){
@@ -56,8 +56,8 @@ function find($pattern,$dir = __ROOT__){
 
 /**
  * 根据名称在目录下查找文件夹
- * @param string $pattern
- * @param string $dir
+ * @param string $pattern 匹配规则
+ * @param string $dir 搜索目标根目录
  * @return array
  */
 function finddir($pattern,$dir = __ROOT__){
@@ -77,8 +77,8 @@ function finddir($pattern,$dir = __ROOT__){
 
 /**
  * 根据名称在目录下查找文件
- * @param string $pattern
- * @param string $dir
+ * @param string $pattern 匹配规则
+ * @param string $dir 搜索目标根目录
  * @return array
  */
 function findfile($pattern,$dir = __ROOT__){

@@ -33,7 +33,7 @@ function is_intersect(array $needle, array $haystack){
 if (!function_exists('is_json')){
     /**
      * 是否是json
-     * @param string $s 判断的字串tr
+     * @param string $s 判断的字串
      * @return boolean
      */
     function is_json($str){
@@ -57,7 +57,7 @@ function is_md5($s) {
 
 /**
  * 判断字符串是否是utf8格式
- * @param string $word
+ * @param string $word 判断的字串
  * @return boolean
  */
 function is_utf8($word) {
@@ -251,49 +251,53 @@ function is_date($s){
 }
 
 /**
- * 长度是否小于等于提供的数值
+ * 长度是否小于提供的数值
  * @param string $s 判断的字串
- * @param int $length
+ * @param int $length 判断小于的长度
  * @return boolean
  */
-function max_length($s,$length){
+function is_shorter_than($s,$length){
     if (!is_int($length))
         return false;
-    return (length($s) <= $length);
+    return (length($s) < $length);
 }
 
 /**
- * 长度是否大于等于提供的数值
+ * 长度是否大于提供的数值
  * @param string $s 判断的字串
- * @param int $length
+ * @param int $length 判断大于的长度
  * @return boolean
  */
-function min_length($s,$length){
+function is_longer_than($s,$length){
     if (!is_int($length))
         return false;
-    return (length($s) >= $length);
+    return (length($s) > $length);
 }
 
 /**
  * 大小是否大于提供的数值
  * @param string $s 判断的字串
- * @param int $min
+ * @param int $num 判断大于的数值
  * @return boolean
  */
-function greater_than($s,$min){
+function is_greater_than($s,$num){
+    if (!is_int($length))
+        return false;
     $i = floatval($s);
-    return $i > $min;
+    return $i > $num;
 }
 
 /**
  * 大小是否小于提供的数值
  * @param string $s 判断的字串
- * @param int $max
+ * @param int $num 判断小于的数值
  * @return boolean
  */
-function less_than($s,$max){
+function is_less_than($s,$num){
+    if (!is_int($length))
+        return false;
     $i = floatval($s);
-    return $i < $max;
+    return $i < $num;
 }
 
 /**
@@ -320,7 +324,7 @@ function is_tw_idcard($s){
  * @param array $data 待验证的数据
  * @param array $customMessages 自定义校验提示
  * @return boolean
- * @demo /lib/validator/demo.php
+ * @example ../lib/validator/demo.php
  */
 function validator(array $rules, array $data = null,array $customMessages = null) {
         $validator = Validator::make($rules, $data);

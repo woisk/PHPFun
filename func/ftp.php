@@ -8,7 +8,7 @@
  * 连接ftp
  * 
  * $ftp = 'ftp://user:pass@192.168.99.1:21'
- * @param string $ftp
+ * @param string $ftp ftp连接url
  * @return boolean
  */
 function ftp_connect_v2($ftp){
@@ -60,8 +60,8 @@ function ftp_upload($ftp,$source,$target){
  * $ftp = 'ftp://username:password@115.216.196.218:21';
  * 
  * ftp_upload($ftp,'/data/www/ucenter/data/test123.js');
- * @param string $ftp
- * @param string $path
+ * @param string $ftp ftp连接url
+ * @param string $path 文件路径
  * @return boolean
  */
 function ftp_del($ftp, $path){
