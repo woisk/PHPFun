@@ -350,7 +350,11 @@ function udp_server($ip,$port,Closure $callback, $msg_eof = "\r\n\r\n"){
     //服务器信息
     $server = "udp://{$ip}:{$port}";
     
-    $socket = stream_socket_server($server, $errno, $errstr, STREAM_SERVER_BIND);
+    $socket = stream_socket_server($server, $errno, $errstr, STREAM_SERVER_BIND, stream_context_create(array(
+        'http' => array(
+            'timeout' => 86400,
+        )
+    )));
     if ($socket){
         echo "stream_socket_server() successed!\n";
     }else{
@@ -417,7 +421,7 @@ function udp_request($ip, $port, $outMsg = '', $timeout = 1, $msg_eof = "\r\n\r\
         )
     )));
     if ($socket){
-        echo "stream_socket_client() successed!\n";
+        //echo "stream_socket_client() successed!\n";
     }else{
         echo "stream_socket_client() failed: $errstr ($errno)\n";
         exit(1);
