@@ -211,93 +211,127 @@ function phpinput(
 }
 
 /**
- * 创建udp服务器
+ * 创建tcp服务器
  * @param string $ip 服务器ip
  * @param int $port 服务器端口
  * @param Closure $callback 接收请求回调函数，参数是udp请求内容
+ * @param string $msg_eof 消息结束符号
  */
-function udp_server($ip,$port,Closure $callback){
-    //消息结束符号
-    $msg_eof = "\n\r\n\r";
+function tcp_server($ip,$port,Closure $callback, $msg_eof = "\r\n\r\n"){
+    set_time_limit(0);
+    ini_set('default_socket_timeout', 86400);
     
-    $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP); // 创建一个SOCKET
-    if ($socket)
+    $protocol = getprotobyname('tcp');
+    $socket = @socket_create(AF_INET, SOCK_STREAM, $protocol); // 创建一个SOCKET
+    if ($socket){
         echo "socket_create() successed!\n";
-    else
-        echo "socket_create() failed:" . socket_strerror($socket) . "\n";
+    }else{
+        echo "socket_create() failed:" . socket_strerror(socket_last_error()) . "\n";
+        exit(1);
+    }
     
     $bind = socket_bind($socket, $ip, $port); // 绑定一个SOCKET
-    if ($bind)
+    if ($bind){
         echo "socket_bind() successed!\n";
-    else
-        echo "socket_bind() failed:" . socket_strerror($bind) . "\n";
+    }else{
+        echo "socket_bind() failed:" . socket_strerror(socket_last_error($socket)) . "\n";
+        exit(1);
+    }
     
     $listen = socket_listen($socket); // 间听SOCKET
-    if ($listen)
+    if ($listen){
         echo "socket_listen() successed!\n";
-    else
-        echo "socket_listen() failed:" . socket_strerror($listen) . "\n";
+    }else{
+        echo "socket_listen() failed:" . socket_strerror(socket_last_error($socket)) . "\n";
+        exit(1);
+    }
 
+    socket_set_nonblock($socket);
+    
+    $data = '';
     
     do{
-        $data = '';
-        if (($msgsock = socket_accept($socket)) < 0) {
-            echo "socket_accept() failed: reason: " . socket_strerror($msgsock) . "\n";
-            break;
-        }
-        
-        do {
-            //接收客户端发来的信息
-            $inMsg = socket_read($socket,1024);
-            //服务端打印出相关信息
-            echo "Receive : {$inMsg}";
-            
-            $data .= $inMsg;
-            if ($eof_pos = strrpos($data, $msg_eof)){
-                //执行回调
-                $outMsg = $callback(substr($data, 0, $eof_pos));
-                //给客户端发送信息
-                $outMsg .= $eof_pos;
-                socket_write($socket, $outMsg, strlen($outMsg));
-                break;
+        if (($connection = socket_accept($socket)) === false) {
+            usleep(100);
+        }else if ($connection > 0){            
+            do {
+                //接收客户端发来的信息
+                $inMsg = socket_read($connection,1024);
+                //服务端打印出相关信息
+                echo "Receive : {$inMsg}\n";
+
+                if ($msg_eof){
+                    $data .= $inMsg;
+                    if ($eof_pos = strrpos($data, $msg_eof)){
+                        //执行回调
+                        $outMsg = $callback(substr($data, 0, $eof_pos));
+                        //给客户端发送信息
+                        $outMsg .= $msg_eof;
+                        socket_write($connection, $outMsg, strlen($outMsg));
+                        $data = '';
+                        break;
+                    }
+                }else{
+                    $data = $inMsg;
+
+                    //执行回调
+                    $outMsg = $callback($data);
+                    //给客户端发送信息
+                    socket_write($connection, $outMsg, strlen($outMsg));
+                    break;
             }
-        } while ($inMsg !== false);
-        
-        socket_close($msgsock);
+                
+            } while ($inMsg !== false);
+            
+            socket_close($connection);
+        }else{
+            echo "socket_accept() failed: reason: " . socket_strerror($connection) . "\n";
+            break;
+        }        
     }while(true);
     socket_close($socket);
 }
 
 /**
- * 发送udp请求
+ * 发送tcp请求
  * @param string $ip ip地址
  * @param int $port 端口
  * @param string $outMsg 发送的数据
+ * @param string $msg_eof 消息结束符号
  * @return string
  */
-function udp_request($ip, $port, $outMsg = ''){
-    //消息结束符号
-    $msg_eof = "\n\r\n\r";
-    
-    $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP); // 创建一个SOCKET
-    if ($socket)
-        echo "socket_create() successed!\n";
-    else
-        echo "socket_create() failed:" . socket_strerror($socket) . "\n";
+function tcp_request($ip, $port, $outMsg = '', $msg_eof = "\r\n\r\n"){    
+    $protocol = getprotobyname('tcp');
+    $socket = @socket_create(AF_INET, SOCK_STREAM, $protocol); // 创建一个SOCKET
+    if ($socket){
+        //echo "socket_create() successed!\n";
+    }else{
+        echo "socket_create() failed:" . socket_strerror(socket_last_error()) . "\n";
+        exit(1);
+    }
     
     $conn = socket_connect($socket, $ip, $port); // 建立SOCKET的连接
-    if ($conn)
-        echo "Success to connection![" . $ip . ":" . $port . "]\n";
-    else
-        echo "socket_connect() failed:" . socket_strerror($conn) . "\n";
+    if ($conn){
+        //echo "Success to connection![" . $ip . ":" . $port . "]\n";
+    }else{
+        echo "socket_connect() failed:" . socket_strerror(socket_last_error($socket)) . "\n";
+        exit(1);
+    }
     
-    $outMsg .= $msg_eof;
+    if ($msg_eof) $outMsg .= $msg_eof;
     socket_write($socket, $outMsg, strlen($outMsg));
     
     $data = '';
-    do{
-        $data .= socket_read($socket, 1024);
-    }while (!$eof_pos = strrpos($data, $msg_eof));
+    if ($msg_eof){
+        do{
+            $data .= socket_read($socket, 1024);
+        }while (!$eof_pos = strrpos($data, $msg_eof));
+        $data = substr($data, 0, $eof_pos);
+    }else{
+        while ($inMsg = socket_read($socket, 1024)){
+            $data .= $inMsg;
+        }
+    }
 
     socket_close($socket);
     return $data;
@@ -308,56 +342,105 @@ function udp_request($ip, $port, $outMsg = ''){
  * @param string $ip 服务器ip
  * @param int $port 服务器端口
  * @param Closure $callback 接收请求回调函数，参数是udp请求内容
+ * @param string $msg_eof 消息结束符号
  */
-function udp_stream_server($ip,$port,Closure $callback){
+function udp_server($ip,$port,Closure $callback, $msg_eof = "\r\n\r\n"){
+    set_time_limit(0);
+    ini_set('default_socket_timeout', 86400);
     //服务器信息
     $server = "udp://{$ip}:{$port}";
-    //消息结束符号
-    $msg_eof = "\n\r\n\r";
+    
     $socket = stream_socket_server($server, $errno, $errstr, STREAM_SERVER_BIND);
-    if (!$socket) {
-        die("$errstr ($errno)");
+    if ($socket){
+        echo "stream_socket_server() successed!\n";
+    }else{
+        echo "stream_socket_server() failed: $errstr ($errno)\n";
+        exit(1);
     }
 
     $data = '';
-    do {
+    
+    do{
         //接收客户端发来的信息
-        $inMsg = stream_socket_recvfrom($socket, 1024, 0, $peer);
-        //服务端打印出相关信息
-        echo "Client : $peer\n";
-        echo "Receive : {$inMsg}";
-        //给客户端发送信息
-        //$outMsg = substr($inMsg, 0, (strrpos($inMsg, $msg_eof))).' -- '.date("D M j H:i:s Y\r\n");
-        
-        $data .= $inMsg;
-        if ($eof_pos = strrpos($data, $msg_eof)){
-            //执行回调
-            $outMsg = $callback(substr($data, 0, $eof_pos));
-            //删除上一批数据
-            $data = substr($data, $eof_pos+strlen($msg_eof));
-            //给客户端发送信息
-            stream_socket_sendto($socket, $outMsg, 0, $peer);
-        }
-    } while ($inMsg !== false);
+        if (($inMsg = stream_socket_recvfrom($socket, 8192, 0, $peer)) == false) {
+            usleep(100);
+        }else if (strlen($inMsg) > 0){
+            //服务端打印出相关信息
+            echo "Client : {$peer}\n";
+            echo "Receive : {$inMsg}\n";
+            
+            if ($msg_eof){
+                $data .= $inMsg;
+                
+                if ($eof_pos = strrpos($data, $msg_eof)){
+                    //执行回调
+                    $outMsg = $callback(substr($data, 0, $eof_pos));
+                    //给客户端发送信息
+                    $outMsg .= $msg_eof;
+                    stream_socket_sendto($socket, $outMsg, 0, $peer);
+                    $data = '';
+                    continue;
+                }
+            }else{
+                $data = $inMsg;
+                
+                //执行回调
+                $outMsg = $callback($data);
+                //给客户端发送信息
+                stream_socket_sendto($socket, $outMsg, 0, $peer);
+                continue;
+            }            
+        }else{
+            echo "stream_socket_recvfrom() failed\n";
+            break;
+        }        
+    }while(true);
+    fclose($socket);
 }
 
 /**
  * 发送udp请求
  * @param string $ip ip地址
  * @param int $port 端口
- * @param string $data 发送的数据
- * @return string
+ * @param string $outMsg 发送的数据
+ * @param int $timeout 超时时间，秒
+ * @param string $msg_eof 消息结束符号
+ * @return type
  */
-function udp($ip, $port, $data = ''){
-    $handle = stream_socket_client("udp://{$ip}:{$port}", $errno, $errstr);
-    if( !$handle ){
-        die("ERROR: {$errno} - {$errstr}\n");
+function udp_request($ip, $port, $outMsg = '', $timeout = 1, $msg_eof = "\r\n\r\n"){
+    //服务器信息
+    $server = "udp://{$ip}:{$port}";
+    
+    $socket = stream_socket_client($server, $errno, $errstr, $timeout, STREAM_CLIENT_CONNECT, stream_context_create(array(
+        'http' => array(
+            'timeout' => $timeout,
+        )
+    )));
+    if ($socket){
+        echo "stream_socket_client() successed!\n";
+    }else{
+        echo "stream_socket_client() failed: $errstr ($errno)\n";
+        exit(1);
     }
-    //消息结束符号
-    $msg_eof = "\n\r\n\r";
-    fwrite($handle, $data.$msg_eof);
-    $result = '';
-    while ($line = fgets($handle)) $ret .= $line;
-    fclose($handle);
-    return $result;
+    
+    stream_set_timeout($socket, 0, $timeout * 1000);
+    ini_set('default_socket_timeout', $timeout);
+    
+    if ($msg_eof) $outMsg .= $msg_eof;
+    fwrite($socket, $outMsg, strlen($outMsg));
+    
+    $data = '';
+    if ($msg_eof){
+        do{
+            $data .= fread($socket, 1024);
+        }while (!$eof_pos = strrpos($data, $msg_eof));
+        $data = substr($data, 0, $eof_pos);
+    }else{
+        while ($inMsg = fread($socket, 1024)){
+            $data .= $inMsg;
+        }
+    }
+
+    fclose($socket);
+    return $data;
 }

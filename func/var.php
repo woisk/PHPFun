@@ -1,8 +1,32 @@
 <?php
 /**
- * 收集的有用数据值
+ * 有关数据值常量、数据转化
  * @author wuxiao
  */
+
+/**
+ * 转化为数组
+ * @param type $var
+ * @return type
+ */
+function to_array($var){
+    if (is_scalar($var)){
+        return $var;
+    }else if (is_array($var)){
+        foreach ($var as $k=>$each){
+            $var[$k] = to_array($each);
+        }
+        return $var;
+    }else if (is_object($var)){
+        $var = (array)$var;
+        foreach ($var as $k=>$each){
+            $var[$k] = to_array($each);
+        }
+        return $var;
+    }else{
+        return $var;
+    }
+}
 
 /**
  * 返回所有mime和扩展名对应数组
