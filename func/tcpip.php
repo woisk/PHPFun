@@ -29,9 +29,7 @@ function rand_ip(){
 /**
  * 复杂版的socket交互函数
  * @param enum $verb HTTP Request Method (GET and POST supported)
- * @param string $ip Target IP/Hostname
- * @param int $port Target TCP port
- * @param string $uri Target URI
+ * @param string $url Target url without query params
  * @param array|string $getdata HTTP GET Data ie. array('var1' => 'val1', 'var2' => 'val2')
  * @param array|string $postdata HTTP POST Data ie. array('var1' => 'val1', 'var2' => 'val2')
  * @param array|string $cookie HTTP Cookie Data ie. array('var1' => 'val1', 'var2' => 'val2')
@@ -43,9 +41,7 @@ function rand_ip(){
  */
 function http_request(
     $verb = 'GET',
-    $ip,
-    $port = 80,
-    $uri = '/',
+    $url,
     $getdata = array(),
     $postdata = array(),
     $cookie = array(),
@@ -57,6 +53,15 @@ function http_request(
 {
     $ret = '';
     $verb = strtoupper($verb);
+    
+     if (!$url = parse_url($url))
+        return 'Incorrect url';
+    if (empty($url['host']) || empty($url['path']))
+        return 'Incorrect url';
+    
+    $ip = $url['host'];
+    $uri = $url['path'];
+    $port = empty($url['port']) ? 80 : $url['port'];
     
     if (is_string($getdata))
         parse_str($getdata, $getdata);
@@ -108,10 +113,10 @@ function http_request(
     if (($fp = @fsockopen($ip, $port, $errno, $errstr)) == false) 
         return "Error $errno: $errstr\n"; 
     
-    stream_set_timeout($fp, 0, $timeout * 1000); 
+    stream_set_timeout($fp, $timeout); 
     
     fputs($fp, $req); 
-    while ($line = fgets($fp)) $ret .= $line; 
+    while ($piece = fread($fp,4096)) $ret .= $piece; 
     fclose($fp); 
     
     if (!$res_hdr) 
@@ -141,11 +146,11 @@ function socket_request(
         return "Error $errno: $errstr\n";
 	//var_dump($fp);
     
-    stream_set_timeout($fp, 0, $timeout * 1000);
+    stream_set_timeout($fp, $timeout);
     
     $r = fputs($fp, $req);
 	//var_dump($r);
-    while ($line = fgets($fp)) $ret .= $line;
+    while ($piece = fread($fp,4096)) $ret .= $piece; 
     fclose($fp);
     
     return $ret;
@@ -198,10 +203,10 @@ function phpinput(
     if (($fp = @fsockopen($ip, $port, $errno, $errstr)) == false)
         return "Error $errno: $errstr\n";
     
-    stream_set_timeout($fp, 0, $timeout * 1000);
+    stream_set_timeout($fp, $timeout);
     
     fputs($fp, $req);
-    while ($line = fgets($fp)) $ret .= $line;
+    while ($piece = fread($fp,4096)) $ret .= $piece; 
     fclose($fp);
     
     if (!$res_hdr) 
@@ -427,7 +432,7 @@ function udp_request($ip, $port, $outMsg = '', $timeout = 1, $msg_eof = "\r\n\r\
         exit(1);
     }
     
-    stream_set_timeout($socket, 0, $timeout * 1000);
+    stream_set_timeout($socket, $timeout);
     ini_set('default_socket_timeout', $timeout);
     
     if ($msg_eof) $outMsg .= $msg_eof;
