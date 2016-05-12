@@ -31,7 +31,11 @@ class PHPFun{
         self::$_instance = $this;
     }
     
-    public static function getInstance(){
+    public static function instance(){
+        if (!is_a(self::$_instance,__CLASS__)){
+            self::$_instance = new self;
+        }
+        self::$_instance->init(func_get_args());
         return self::$_instance;
     }
     
