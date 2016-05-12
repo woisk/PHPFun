@@ -34,6 +34,7 @@ function rand_ip(){
  * @param array|string $postdata HTTP POST Data ie. array('var1' => 'val1', 'var2' => 'val2')
  * @param array|string $cookie HTTP Cookie Data ie. array('var1' => 'val1', 'var2' => 'val2')
  * @param array $custom_headers Custom HTTP headers ie. array('Referer: http://localhost/
+ * @param string $data binary string to send
  * @param int $timeout Socket timeout in seconds
  * @param boolean $req_hdr Include HTTP request headers
  * @param boolean $res_hdr Include HTTP response headers
@@ -46,6 +47,7 @@ function http_request(
     $postdata = array(),
     $cookie = array(),
     $custom_headers = array(),
+    $data = '',
     $timeout = 1,
     $req_hdr = false,
     $res_hdr = false
@@ -69,6 +71,11 @@ function http_request(
         parse_str($postdata, $postdata);
     if (is_string($cookie))
         parse_str($cookie, $cookie);
+    
+    if (!empty($url['query'])){
+        parse_str($url['query'],$query);
+        $getdata = $getdata + $query;
+    }
     
     $getdata_str = count($getdata) ? '?' : '';
     $postdata_str = '';
@@ -98,7 +105,11 @@ function http_request(
     if (!empty($cookie_str)) 
         $req .= 'Cookie: '. substr($cookie_str, 0, -2) . $crlf; 
         
-    if ($verb == 'POST' && !empty($postdata_str)) 
+    if (!empty($data)){
+        $req .= 'Content-Type: application/octet-stream' . $crlf; 
+        $req .= 'Content-Length: '. strlen($data) . $crlf . $crlf; 
+        $req .= $data; 
+    }else if ($verb == 'POST' && !empty($postdata_str)) 
     { 
         $postdata_str = substr($postdata_str, 0, -1); 
         $req .= 'Content-Type: application/x-www-form-urlencoded' . $crlf; 

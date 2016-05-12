@@ -529,6 +529,39 @@ function curl_multi(array $urls, array $options = null) {
 }
 
 /**
+ * CURL发送二进制数据
+ * @param enum $verb HTTP Request Method (GET and POST supported)
+ * @param string $url 目标url地址
+ * @param string $data 数据
+ * @param int $timeout 超时
+ * @return string|boolean
+ */
+function curl_binary($verb = 'GET', $url, $data = '', $timeout = 1) {
+    if (!$url)
+        return false;
+    $init = curl_init();
+    curl_setopt($init, CURLOPT_URL, $url);
+    curl_setopt($init, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($init, CURLOPT_BINARYTRANSFER, true);
+    curl_setopt($init, CURLOPT_CONNECTTIMEOUT , $timeout);
+    curl_setopt($init, CURLOPT_TIMEOUT , $timeout);
+    if ($verb == 'POST'){
+        curl_setopt($init, CURLOPT_POST, true);
+    }
+    if (!empty($data)){
+        curl_setopt($init, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($init, CURLOPT_HTTPHEADER, array('Content-type: application/octet-stream', 'Content-length: '.strlen($data))); 
+    }
+    $result = curl_exec($init);
+    if ($errno = curl_errno($init)){
+        $errstr = curl_error($init);
+        return "Error $errno: $errstr\n"; 
+    }
+    curl_close($init);
+    return $result;
+}
+
+/**
  * 检查url资源是否存在
  * @param string $url 目标url地址
  * @return boolean
