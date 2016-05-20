@@ -283,8 +283,8 @@ function curl($url, $post = null, $timeout = 120, $cookies = null, $headers = nu
     //curl_setopt($init, CURLOPT_NOBODY, 1);
     curl_setopt($init, CURLOPT_URL, $url);
     curl_setopt($init, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($init, CURLOPT_CONNECTTIMEOUT , $timeout);
-    curl_setopt($init, CURLOPT_TIMEOUT , $timeout);
+    curl_setopt($init, CURLOPT_CONNECTTIMEOUT_MS, $timeout*1000);
+    curl_setopt($init, CURLOPT_TIMEOUT_MS , $timeout*1000);
     curl_setopt($init, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($init, CURLOPT_SSL_VERIFYPEER, 0);
     //curl_setopt($init, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2 (.NET CLR 3.5.30729)");
@@ -441,8 +441,8 @@ function curl_multi(array $urls, array $options = null) {
         if (isset($option['timeout'])) {
             $timeout = $option['timeout'];
             if ($timeout){
-                $option[CURLOPT_TIMEOUT] = $timeout;
-                $option[CURLOPT_CONNECTTIMEOUT] = $timeout;
+                $option[CURLOPT_CONNECTTIMEOUT_MS] = $timeout*1000;
+                $option[CURLOPT_TIMEOUT_MS] = $timeout*1000;
             }
             unset($option['timeout']);
         }
@@ -543,8 +543,8 @@ function curl_binary($url, $data = '', $timeout = 1) {
     curl_setopt($init, CURLOPT_URL, $url);
     curl_setopt($init, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($init, CURLOPT_BINARYTRANSFER, true);
-    curl_setopt($init, CURLOPT_CONNECTTIMEOUT , $timeout);
-    curl_setopt($init, CURLOPT_TIMEOUT , $timeout);
+    curl_setopt($init, CURLOPT_CONNECTTIMEOUT_MS, $timeout*1000);
+    curl_setopt($init, CURLOPT_TIMEOUT_MS , $timeout*1000);
     if (!empty($data)){
         curl_setopt($init, CURLOPT_POSTFIELDS, $data);
         curl_setopt($init, CURLOPT_HTTPHEADER, array('Content-type: application/octet-stream', 'Content-length: '.strlen($data))); 

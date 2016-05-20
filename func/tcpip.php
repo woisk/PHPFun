@@ -58,11 +58,11 @@ function http_request(
     
      if (!$url = parse_url($url))
         return 'Incorrect url';
-    if (empty($url['host']) || empty($url['path']))
+    if (empty($url['host']))
         return 'Incorrect url';
     
     $ip = $url['host'];
-    $uri = $url['path'];
+    $uri = empty($url['path']) ? '/' : $url['path'];
     $port = empty($url['port']) ? 80 : $url['port'];
     
     if (is_string($getdata))
@@ -121,10 +121,10 @@ function http_request(
     if ($req_hdr) 
         $ret .= $req; 
     
-    if (($fp = @fsockopen($ip, $port, $errno, $errstr)) == false) 
+    if (($fp = @fsockopen($ip, $port, $errno, $errstr, $timeout)) == false) 
         return "Error $errno: $errstr\n"; 
     
-    stream_set_timeout($fp, $timeout); 
+    stream_set_timeout($fp, 0, $timeout*1000000); 
     
     fputs($fp, $req); 
     while ($piece = fread($fp,4096)) $ret .= $piece; 
@@ -153,11 +153,11 @@ function socket_request(
 {
     $ret = '';
     
-    if (($fp = @fsockopen($ip, $port, $errno, $errstr)) == false)
+    if (($fp = @fsockopen($ip, $port, $errno, $errstr, $timeout)) == false)
         return "Error $errno: $errstr\n";
 	//var_dump($fp);
     
-    stream_set_timeout($fp, $timeout);
+    stream_set_timeout($fp, 0, $timeout*1000000); 
     
     $r = fputs($fp, $req);
 	//var_dump($r);
@@ -190,12 +190,12 @@ function phpinput(
 {
     if (!$url = parse_url($url))
         return 'Incorrect url';
-    if (empty($url['host']) || empty($url['path']))
+    if (empty($url['host']))
         return 'Incorrect url';
 
     $ret = '';
     $ip = $url['host'];
-    $uri = $url['path'];
+    $uri = empty($url['path']) ? '/' : $url['path'];
     $port = empty($url['port']) ? 80 : $url['port'];
     $getdata_str = empty($url['query']) ? '' : '?'.$url['query'];
     
@@ -211,10 +211,10 @@ function phpinput(
     if ($req_hdr) 
         $ret .= $req; 
     
-    if (($fp = @fsockopen($ip, $port, $errno, $errstr)) == false)
+    if (($fp = @fsockopen($ip, $port, $errno, $errstr, $timeout)) == false)
         return "Error $errno: $errstr\n";
     
-    stream_set_timeout($fp, $timeout);
+    stream_set_timeout($fp, 0, $timeout*1000000); 
     
     fputs($fp, $req);
     while ($piece = fread($fp,4096)) $ret .= $piece; 
@@ -313,25 +313,28 @@ function tcp_server($ip,$port,Closure $callback, $msg_eof = "\r\n\r\n"){
  * @param string $ip ip地址
  * @param int $port 端口
  * @param string $outMsg 发送的数据
+ * @param int $timeout 超时时间，秒
  * @param string $msg_eof 消息结束符号
  * @return string
  */
-function tcp_request($ip, $port, $outMsg = '', $msg_eof = "\r\n\r\n"){    
+function tcp_request($ip, $port, $outMsg = '', $timeout = 1, $msg_eof = "\r\n\r\n"){    
     $protocol = getprotobyname('tcp');
     $socket = @socket_create(AF_INET, SOCK_STREAM, $protocol); // 创建一个SOCKET
     if ($socket){
         //echo "socket_create() successed!\n";
     }else{
-        echo "socket_create() failed:" . socket_strerror(socket_last_error()) . "\n";
-        exit(1);
+        return "socket_create() failed:" . socket_strerror(socket_last_error()) . "\n";
     }
+    
+    socket_set_option($socket, SOL_SOCKET, SO_SNDTIMEO, array('sec'=>0,'usec'=>$timeout*1000000));
+    socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec'=>0,'usec'=>$timeout*1000000));
+    ini_set('default_socket_timeout', $timeout);
     
     $conn = socket_connect($socket, $ip, $port); // 建立SOCKET的连接
     if ($conn){
         //echo "Success to connection![" . $ip . ":" . $port . "]\n";
     }else{
-        echo "socket_connect() failed:" . socket_strerror(socket_last_error($socket)) . "\n";
-        exit(1);
+        return "socket_connect() failed:" . socket_strerror(socket_last_error($socket)) . "\n";
     }
     
     if ($msg_eof) $outMsg .= $msg_eof;
@@ -439,11 +442,10 @@ function udp_request($ip, $port, $outMsg = '', $timeout = 1, $msg_eof = "\r\n\r\
     if ($socket){
         //echo "stream_socket_client() successed!\n";
     }else{
-        echo "stream_socket_client() failed: $errstr ($errno)\n";
-        exit(1);
+        return "stream_socket_client() failed: $errstr ($errno)\n";
     }
     
-    stream_set_timeout($socket, $timeout);
+    stream_set_timeout($fp, 0, $timeout*1000000); 
     ini_set('default_socket_timeout', $timeout);
     
     if ($msg_eof) $outMsg .= $msg_eof;
