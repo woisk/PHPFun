@@ -171,7 +171,7 @@ function ut_end($tag = null,$render = UT_RENDER){
     $trace = array();
     foreach($bt as $k=>$v){
         list($class,$type,$function,$file,$line)
-                = array(got($v,'class'),got($v,'type'),got($v,'function'),got($v,'file'),got($v,'line'));
+                = @array($v['class'],$v['type'],$v['function'],$v['file'],$v['line']);
         $trace[] = "#$k {$class}{$type}{$function}() called at [{$file}:{$line}]";
     }
     if ($info['render'] === UT_RENDER){
