@@ -5,6 +5,22 @@
  */
 
 /**
+ * 判断当前系统是否大端序(即网络字节序)
+ * @return boolean
+ */
+function is_bigendian()
+{
+	$bin = pack("L", 0x12345678);
+	$hex = bin2hex($bin);
+	if (ord(pack("H2", $hex)) === 0x78)
+	{
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+/**
  * 记录日志
  * @param string $text 日志内容
  * @param string $pre 日志文件名前缀
