@@ -78,12 +78,12 @@ function is_chinese($s){
 }
 
 /**
- * 是否是ACSII字符，即双字节字符(包括汉字在内)
+ * 是否是ACSII字符，即单字节字符
  * @param string $s 判断的字串
  * @return boolean
  */
 function is_ascii($s){
-    return (bool)preg_match('/^[\\x00-\\xFF]+$/', $s);
+    return (bool)preg_match('/^[\\x00-\\x7F]+$/', $s);
 }
 
 /**
