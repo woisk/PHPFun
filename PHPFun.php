@@ -33,7 +33,7 @@ class PHPFun{
     
     public static function instance(){
         if (!is_a(self::$_instance,__CLASS__)){
-            self::$_instance = new self;
+            self::$_instance = new self(' ');
         }
         self::$_instance->init(func_get_args());
         return self::$_instance;
