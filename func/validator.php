@@ -5,6 +5,15 @@
  */
 
 /**
+ * 判断数组是不是一个纯列表(和字典相反)
+ * @param array $arr
+ * @return type
+ */
+function is_list(array $arr){
+    return array_keys($arr) === range(0,count($arr)-1);
+}
+
+/**
  * 判断数组是否是另一个数组的其中一段
  * @param array $needle 子数组
  * @param array $haystack 父数组
