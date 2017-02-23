@@ -130,6 +130,16 @@ class Thread{
                     $this->monitor[$pid] = $child_thread;
                     return $pid;
                 }else{
+                    pcntl_alarm(1);
+                    $pidfile = $this->pidfile;
+                    $interval = $this->interval;
+                    pcntl_signal(SIGALRM, function() use ($pidfile, $interval){
+                        fwrite(STDOUT, 'pcntl_signal');
+                        if ((time() - filectime($pidfile)) > $interval){
+                            fwrite(STDOUT, 'pcntl_signal_timeout');
+                            exit(1);
+                        }
+                    }); 
                     //子进程
                     $child_thread();
                     exit(0);
@@ -164,6 +174,7 @@ class Thread{
      * 杀死所有子进程
      */
     private function killall(){
+        fwrite(STDOUT, 'killall');
         foreach ($this->getpid() as $pid){
             @posix_kill($pid, SIGINT);
         }

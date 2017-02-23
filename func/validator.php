@@ -4,6 +4,31 @@
  * @author wuxiao
  */
 
+ /*
+ * 函数名称：isName
+ * 简要描述：姓名昵称合法性检查，只能输入中文英文
+ * 输入：string
+ * 输出：boolean
+ */
+function is_name($val) {
+	if (preg_match("/^[\x80-\xffa-zA-Z0-9]{3,60}$/", $val)) {//2008-7-24
+		return TRUE;
+	}
+	return FALSE;
+}
+
+ /*
+ * 函数名称：isPostcode
+ * 简要描述：检查输入的是否为邮编
+ * 输入：string
+ * 输出：boolean
+ */
+function is_postcode($val) {
+	if (ereg("^[0-9]{4,6}$", $val))
+		return TRUE;
+	return FALSE;
+}
+
 /**
  * 判断数组是不是一个纯列表(和字典相反)
  * @param array $arr
@@ -86,6 +111,33 @@ function is_chinese($s){
     return (bool)(preg_match('/[\x80-\xff]./', $s) || preg_match('/[\x{4e00}-\x{9fa5}]./', $s));
 }
 
+/*
+ * 函数名称：isChinese
+ * 简要描述：检查是否输入为汉字
+ * 输入：string
+ * 输出：boolean
+ */
+function is_chinese_v2($sInBuf) {
+	$iLen = strlen($sInBuf);
+	for ($i = 0; $i < $iLen; $i++) {
+		if (ord($sInBuf{$i}) >= 0x80) {
+			if ((ord($sInBuf{$i}) >= 0x81 && ord($sInBuf{$i}) <= 0xFE) && ((ord($sInBuf{$i + 1}) >= 0x40 && ord($sInBuf{$i + 1}) < 0x7E) || (ord($sInBuf{$i + 1}) > 0x7E && ord($sInBuf{$i + 1}) <= 0xFE))) {
+				if (ord($sInBuf{$i}) > 0xA0 && ord($sInBuf{$i}) < 0xAA) {
+					//有中文标点
+					return FALSE;
+				}
+			} else {
+				//有日文或其它文字
+				return FALSE;
+			}
+			$i++;
+		} else {
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
 /**
  * 是否是ACSII字符，即单字节字符
  * @param string $s 判断的字串
@@ -133,6 +185,35 @@ function is_domain($s){
     return (bool)preg_match('/^([\\w-]+\\.)+[\\w-]+$/', $s);
 }
 
+/*
+ * 函数名称:isDomain($Domain)
+ * 简要描述:检查一个（英文）域名是否合法
+ * 输入:string 域名
+ * 输出:boolean
+ */
+function is_domain_v2($Domain) {
+	if (!eregi("^[0-9a-z]+[0-9a-z\.-]+[0-9a-z]+$", $Domain)) {
+		return FALSE;
+	}
+	if (!eregi("\.", $Domain)) {
+		return FALSE;
+	}
+
+	if (eregi("\-\.", $Domain) or eregi("\-\-", $Domain) or eregi("\.\.", $Domain) or eregi("\.\-", $Domain)) {
+		return FALSE;
+	}
+
+	$aDomain = explode(".", $Domain);
+	if (!eregi("[a-zA-Z]", $aDomain[count($aDomain) - 1])) {
+		return FALSE;
+	}
+
+	if (strlen($aDomain[0]) > 63 || strlen($aDomain[0]) < 1) {
+		return FALSE;
+	}
+	return TRUE;
+}
+
 /**
  * 是否是固定电话
  * @param string $s 判断的字串
@@ -149,6 +230,19 @@ function is_phone($s){
  */
 function is_mobile($s){
     return (bool)preg_match('/^(13|15|17)[0-9]{9}$/',$s);
+}
+
+ /*
+ * 函数名称：isMobile
+ * 简要描述：检查输入的是否为手机号
+ * 输入：string
+ * 输出：boolean
+ */
+function is_mobile_v2($val) {
+	//该表达式可以验证那些不小心把连接符“-”写出“－”的或者下划线“_”的等等
+	if (ereg("(^(\d{2,4}[-_－—]?)?\d{3,8}([-_－—]?\d{3,8})?([-_－—]?\d{1,7})?$)|(^0?1[35]\d{9}$)", $val))
+		return TRUE;
+	return FALSE;
 }
 
 /**
@@ -175,7 +269,7 @@ function is_ipv4($s){
  * @return boolean
  */
 function is_ip($s){
-    return (bool)filter_var($s,FILTER_VALIDATE_IP);
+    return (bool)filter_var($s,FILTER_VALIDATE_IP) && (bool)ip2long($val);
 }
 
 /**
@@ -257,6 +351,20 @@ function is_upper($s){
  */
 function is_date($s){
     return (bool)preg_match('/^\\d{4}(\\-|\\/|\.)\\d{1,2}\\1\\d{1,2}$/',$s);
+}
+
+/*
+ * 函数名称：isTime
+ * 简要描述：检查日期是否符合0000-00-00 00:00:00
+ * 输入：string
+ * 输出：boolean
+ */
+function is_time($sTime) {
+	if (ereg("^[0-9]{4}\-[][0-9]{2}\-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$", $sTime)) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
 }
 
 /**
