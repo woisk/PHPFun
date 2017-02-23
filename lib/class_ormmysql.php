@@ -85,12 +85,6 @@ class ORMMYSQL{
 	private static function instance($model = null,$extra = null){
 		
 		$_instance = new self;
-                
-        if (0 < preg_match('/^\d+$/',$extra)){
-			$_instance->id = $extra;
-		}elseif(is_string($extra)){
-			$_instance->alias = '`'.$extra.'`';
-		}
 		
 		if (!is_string($model)){
 			return $_instance->error('模型字符串不正确');
@@ -98,6 +92,13 @@ class ORMMYSQL{
 			$_instance->model = $model;
 		}
 		
+		if (0 < preg_match('/^\d+$/',$extra)){
+			$_instance->id = $extra;
+			//$_instance->where('id','=',$extra);
+		}elseif(is_string($extra)){
+			$_instance->alias = '`'.$extra.'`';
+		}
+		//var_dump($_instance->wheres);
 		return $_instance;
 	}
 	
@@ -119,6 +120,8 @@ class ORMMYSQL{
 	}
 	
 	public function timestamp($timestamps = array(),$type = true){
+		if (is_string($timestamps))
+			$timestamps = array($timestamps);
 		if (!is_array($timestamps) || empty($timestamps)){
 			return $this->error('时间字段数组为空');
 		}
@@ -520,7 +523,7 @@ class ORMMYSQL{
 			//var_dump($this->wheres);
 			foreach ($this->wheres as $where) {
 				if (is_array($where)){
-					if ('delete' !== $action){
+					if (!in_array($action,array('delete','update'))){
 						$where['field'] = $where['alias'].'.'.$where['field'];
 					}
 					unset($where['alias']);
@@ -582,7 +585,7 @@ class ORMMYSQL{
 			case 'update':
 				//$updateSQL = "`ty`='132',`sdf`='df'";
 				$updateSQL = $param['updateSQL'];
-				$DML = 'update `'.$this->model.'` as '.$this->alias.' set '.$updateSQL.$whereSQL.$limitSQL;
+				$DML = 'update `'.$this->model.'` set '.$updateSQL.$whereSQL.$limitSQL;
 				break;
 			case 'insert':
 				//$insertSQL = "(`sdf`,`dd`) values('df','234')";
@@ -656,6 +659,10 @@ class ORMMYSQL{
 		}
         self::$last_sql = $this->sql;
 		return $this->sql;
+	}
+	
+	public function insert_id(){
+		return $this->insert_id;
 	}
 	
 	public function clear(){
