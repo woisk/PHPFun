@@ -89,7 +89,7 @@ function length($str) {
 /**
  * 返回随机字符串，数字/大写字母/小写字母
  * @param int $len 长度
- * @param enum $format 格式，ALL：英文字符+数字，CHAR：仅英文字符，NUMBER：仅数字
+ * @param enum $format 格式，ALL：英文字符+数字，CHAR：仅英文字符，NUMBER：仅数字，PNUMBER仅正数数字
  * @return string
  */
 function random($len = 6, $format = 'ALL') {
@@ -103,6 +103,9 @@ function random($len = 6, $format = 'ALL') {
 		case 'NUMBER' :
 			$chars = '0123456789';
 			break;
+        case 'PNUMBER' :
+           $chars = '123456789';
+           break;
 		default :
 			$chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 			break;
