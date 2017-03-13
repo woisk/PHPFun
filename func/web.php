@@ -14,15 +14,17 @@ function alert($msg = null, $url = null) {
     //echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />';
     headers_sent() or header('Content-type: text/html; charset=utf-8');
     if (($msg === null) && ($url === null)) {
-        if ($alert = session($session_key))
+        if ($alert = session($session_key)){
             echo '<script>alert("' . $alert . '");</script>';
+        }
         session($session_key, '');
         return true;
     }
-    if ($url)
+    if ($url){
         session($session_key, $msg);
-    else
+    }else{
         echo '<script>alert("' . $msg . '");</script>';
+    }
     if ($url) {
         echo '<script>location.href="' . $url . '";</script>';
         exit;
@@ -36,16 +38,23 @@ function alert($msg = null, $url = null) {
  * @param string $msg 跳转前显示的提示文字
  */
 function delay($url = '/',$timeout = 5,$msg = ''){
-    if (intval($timeout) <= 0)
+    $timeout = intval($timeout);
+    if ($timeout <= 0){
         return error('wrong timeout setting <'.$timeout.'>');
-    if ($msg)
+    }
+    //echo "{$msg}<meta http-equiv='refresh' content='{$timeout}; url={$url}' />";
+    headers_sent() or header('Content-type: text/html; charset=utf-8');
+    if ($msg){
         echo "\r\n<br />",$msg;
-    echo "<br />\r\n";
-    echo '<span id="delaySecond">'.(int)$timeout.'</span>秒后跳转......';
-    echo '<script>var delay='.(int)$timeout.';setInterval(function(){
+    }
+    echo <<<EOT
+    <br />\r\n
+    <span id="delaySecond">{$timeout}</span>秒后跳转......
+    <script>var delay={$timeout};var delayer=setInterval(function(){
         document.getElementById("delaySecond").innerHTML=--delay;
-        if (delay<=0) location.href="'.$url.'";
-    },1000)</script>';
+        if (delay<=0) {location.href="{$url}";clearInterval(delayer);}
+    },1000)</script>
+EOT;
 }
 
 /**
