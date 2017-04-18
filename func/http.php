@@ -504,7 +504,7 @@ function curl_multi(array $urls, array $options = null) {
     foreach ($urls as $k => $url) {
         $ch = curl_init($url);
         $option = !empty($options[$k]) ? ($options[$k] + $default_option) : $default_option;
-        curl_setopt_array($ch, $option);
+        @curl_setopt_array($ch, $option);
         curl_multi_add_handle($init, $ch);
         $conn[$k] = $ch;
     }
