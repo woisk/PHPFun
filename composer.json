@@ -3,12 +3,12 @@
     "license": "MIT",
     "description": "php大量自定义的方便的函数",
     "keywords": ["php", "function", "custom", "user-defined"],
-    "homepage": "https://github.com/shiyangwu520/PHPFun",
+    "homepage": "https://github.com/ownfire/PHPFun",
     "authors": [
         {
             "name": "ownfire",
             "email": "ownfire@163.com",
-            "homepage": "https://github.com/shiyangwu520",
+            "homepage": "https://github.com/ownfire",
             "role": "Developer"
         }
     ],
