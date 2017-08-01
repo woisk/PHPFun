@@ -23,6 +23,25 @@ function uuid() {
 }
 
 /**
+ * 字符代换加密/解密
+ * @param $string
+ * @param string $operation
+ * @return mixed
+ */
+function sub_crypt($string, $operation = 'ENCODE') {
+    $source = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $dest = 'syxV4uTeRqLAltoOvnhSDUd3bWZQBf1Y7XKgHm25MzICGkNJwaFjr8Pc0i96pE';
+    if ($operation != 'ENCODE'){
+        list($source,$dest) = array($dest,$source);
+    }
+    for ($i=0;$i<strlen($string);$i++){
+        $pos = strpos($source,$string[$i]);
+        $string[$i] = $dest[$pos];
+    }
+    return $string;
+}
+
+/**
  * 来自ucenter的加/解密函数
  * @param string $string 要加/解密的字符串
  * @param enum $operation 操作类型，DECODE：解密，ENCODE：加密
