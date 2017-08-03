@@ -28,7 +28,7 @@ function uuid() {
  * @param string $operation
  * @return mixed
  */
-function sub_crypt($string, $operation = 'ENCODE') {
+function str_crypt($string, $operation = 'ENCODE') {
     $source = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     $dest = 'syxV4uTeRqLAltoOvnhSDUd3bWZQBf1Y7XKgHm25MzICGkNJwaFjr8Pc0i96pE';
     if ($operation != 'ENCODE'){
