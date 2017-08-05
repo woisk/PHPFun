@@ -26,7 +26,7 @@ class PHPFun{
     
     protected static $_instance;
     
-    public function __construct() {
+    private function __construct() {
         $this->init(func_get_args());
         self::$_instance = $this;
     }
@@ -39,7 +39,7 @@ class PHPFun{
         return self::$_instance;
     }
     
-    public function load($namespace){
+    public static function load($namespace){
         $namespace = basename($namespace, EXT);
         $namespace = FUN_FUNC . $namespace . EXT;
         return req_once($namespace);
