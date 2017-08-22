@@ -162,7 +162,7 @@ function password_strength($password_str){
  * @param mixed $private_key 私钥文件/文本
  * @return string 密文
  */
-function rsa_encrypt($data,$private_key){
+function rsa_private_encrypt($data,$private_key){
     if (empty($private_key)){
         return false;
     }
@@ -183,7 +183,7 @@ function rsa_encrypt($data,$private_key){
  * @param mixed $public_key 公钥文件/文本
  * @return string 原文
  */
-function rsa_decrypt($encrypted,$public_key){
+function rsa_public_decrypt($encrypted,$public_key){
     if (empty($public_key)){
         return false;
     }
@@ -197,4 +197,67 @@ function rsa_decrypt($encrypted,$public_key){
     $encrypted = base64_decode($encrypted);
     openssl_public_decrypt($encrypted,$decrypted,$public_key);
     return $decrypted ? $decrypted : false;
+}
+
+/**
+ * RSA加密
+ * @param string $data 数据原文
+ * @param mixed $public_key 公钥文件/文本
+ * @return string 密文
+ */
+function rsa_public_encrypt($data,$public_key){
+    if (empty($public_key)){
+        return false;
+    }
+    if (is_file($public_key)){
+        $public_key = file_get_contents($public_key);
+    }
+    $public_key = openssl_pkey_get_public($public_key);
+    if (!$public_key){
+        return false;
+    }
+    openssl_public_encrypt($data,$encrypted,$public_key);
+    return $encrypted ? base64_encode($encrypted) : false;
+}
+
+/**
+ * RSA解密
+ * @param string $encrypted 密文
+ * @param mixed $private_key 私钥文件/文本
+ * @return string 原文
+ */
+function rsa_private_decrypt($encrypted,$private_key){
+    if (empty($private_key)){
+        return false;
+    }
+    if (is_file($private_key)){
+        $private_key = file_get_contents($private_key);
+    }
+    $private_key = openssl_pkey_get_private($private_key);
+    if (!$private_key){
+        return false;
+    }
+    $encrypted = base64_decode($encrypted);
+    openssl_private_decrypt($encrypted,$decrypted,$private_key);
+    return $decrypted ? $decrypted : false;
+}
+
+/**
+ * @param $origin 原文
+ * @param $key
+ * @param $iv 非 NULL 的初始化向量,16位
+ * @return string
+ */
+function ssl_encrypt($origin,$key,$iv){
+    return openssl_encrypt($origin, 'aes-256-cbc', $key, 0, $iv);
+}
+
+/**
+ * @param $cipher 密文
+ * @param $key
+ * @param $iv 非 NULL 的初始化向量,16位
+ * @return string
+ */
+function ssl_decrypt($cipher,$key,$iv){
+    return openssl_decrypt($cipher, 'aes-256-cbc', $key, 0, $iv);
 }
